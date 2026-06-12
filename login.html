@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – Royal Tours Partner Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background image */
+    .bg-image {
+      position: fixed;
+      inset: 0;
+      background-image: url('https://www.figma.com/api/mcp/asset/99ff50f6-ef3b-499f-9456-af8638b73539');
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+
+    /* Dark overlay */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+
+    /* Login card */
+    .card {
+      position: relative;
+      z-index: 2;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 25px 25px rgba(0, 0, 0, 0.25);
+      width: 392px;
+      padding: 32px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Logo section */
+    .logo-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0 0;
+      width: 350px;
+    }
+
+    .logo-img {
+      height: 25px;
+      width: 86px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .brand-name {
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 28px;
+      letter-spacing: -0.36px;
+      color: #281010;
+      text-align: center;
+    }
+
+    .brand-sub {
+      font-weight: 400;
+      font-size: 10.5px;
+      line-height: 14px;
+      letter-spacing: -0.018px;
+      color: #654a4a;
+      text-align: center;
+    }
+
+    /* Divider */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #ebe5e5;
+      margin-top: 16px;
+    }
+
+    /* Welcome header */
+    .welcome-header {
+      padding: 24px 21px 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .welcome-title {
+      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: -0.3px;
+      color: #140303;
+    }
+
+    .welcome-sub {
+      font-weight: 400;
+      font-size: 12.5px;
+      color: #826a6a;
+    }
+
+    /* Form */
+    .card-content {
+      padding: 20px 21px 0;
+      width: 100%;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 19px;
+      letter-spacing: -0.018px;
+      color: #533636;
+    }
+
+    .field input {
+      background: #f5f3f3;
+      border: 1px solid #dcd1d1;
+      border-radius: 8.75px;
+      height: 42px;
+      padding: 3.5px 14px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 19px;
+      letter-spacing: -0.018px;
+      color: #281010;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus {
+      border-color: #b0a0a0;
+    }
+
+    .forgot-pw {
+      font-weight: 400;
+      font-size: 12px;
+      color: #826a6a;
+      text-align: right;
+      text-decoration: none;
+      margin-top: -6px;
+    }
+
+    .forgot-pw:hover { text-decoration: underline; }
+
+    .login-btn {
+      background: #0a0a0a;
+      color: #fff;
+      border: none;
+      border-radius: 8.75px;
+      height: 42px;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 19px;
+      letter-spacing: -0.018px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .login-btn:hover { background: #2a2a2a; }
+
+    .make-account {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      align-items: center;
+      padding-top: 16px;
+      font-size: 12.5px;
+    }
+
+    .make-account span:first-child {
+      font-weight: 400;
+      color: #826a6a;
+    }
+
+    .make-account span:last-child {
+      font-weight: 500;
+      color: #140303;
+      cursor: pointer;
+    }
+
+    .make-account span:last-child:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="bg-image"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="card">
+    <!-- Logo -->
+    <div class="logo-section">
+      <img class="logo-img" src="https://www.figma.com/api/mcp/asset/2b009a19-b82d-4eff-8e05-096aba0dba59" alt="Royal Tours logo" />
+      <div>
+        <div class="brand-name">Royal Tours</div>
+        <div class="brand-sub">Partner Portal</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Welcome header -->
+    <div class="welcome-header">
+      <div class="welcome-title">Welcome back</div>
+      <div class="welcome-sub">Sign in to your partner account to continue.</div>
+    </div>
+
+    <!-- Form -->
+    <div class="card-content">
+      <div class="login-form">
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" value="cindy@royaltours.com" autocomplete="email" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" value="1234" autocomplete="current-password" />
+        </div>
+
+        <a class="forgot-pw" href="#">Forgot password?</a>
+
+        <button class="login-btn" onclick="window.location.href='admin.html'">Login</button>
+
+        <div class="make-account">
+          <span>Don't have an account?</span>
+          <span>Make an account</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

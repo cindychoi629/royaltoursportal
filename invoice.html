@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Invoice Preview – Royal Tours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #f0eded; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── Top nav ── */
+  .topnav {
+    background: #fff; border-bottom: 1px solid #ebe5e5;
+    padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0; position: sticky; top: 0; z-index: 10;
+  }
+  .topnav-left { display: flex; align-items: center; gap: 12px; }
+  .back-btn {
+    display: flex; align-items: center; gap: 8px; background: none; border: none;
+    cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+    color: #533636; letter-spacing: -0.15px; padding: 0;
+  }
+  .back-btn img { width: 16px; height: 16px; }
+  .back-btn:hover { opacity: 0.75; }
+  .nav-sep { color: #ebe5e5; font-size: 16px; font-weight: 400; line-height: 24px; }
+  .nav-invoice-id { font-size: 14px; color: #826a6a; letter-spacing: -0.15px; line-height: 20px; }
+
+  .topnav-right { display: flex; align-items: center; gap: 8px; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 8px; padding: 9px 17px;
+    border-radius: 6.75px; border: 1px solid #dcd1d1; background: #fff;
+    font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+    color: #281010; cursor: pointer; letter-spacing: -0.15px; white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .nav-btn:hover { background: #f5f3f3; }
+  .nav-btn img { width: 14px; height: 14px; }
+  .nav-btn-primary {
+    display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+    border-radius: 6.75px; border: none; background: #0a0a0a;
+    font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+    color: #fff; cursor: pointer; letter-spacing: -0.15px; white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .nav-btn-primary:hover { background: #2a0808; }
+  .nav-btn-primary img { width: 14px; height: 14px; }
+
+  /* ── Page body ── */
+  .page-body {
+    flex: 1; display: flex; align-items: flex-start; justify-content: center;
+    padding: 40px 24px; overflow-y: auto;
+  }
+
+  /* ── Invoice document ── */
+  .invoice-doc {
+    background: #fff; width: 816px; min-height: 1056px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    padding: 56px 64px; display: flex; flex-direction: column; flex-shrink: 0;
+  }
+
+  /* header row */
+  .inv-header { display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 40px; }
+  .inv-brand { display: flex; align-items: center; gap: 12px; }
+  .inv-brand img { height: 32px; }
+  .inv-brand-name { font-weight: 700; font-size: 20px; color: #281010; letter-spacing: -0.45px; line-height: 25px; }
+  .inv-brand-sub  { font-size: 12px; color: #826a6a; line-height: 16px; }
+  .inv-title-block { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+  .inv-title-block .inv-word { font-weight: 800; font-size: 24px; color: #0a0a0a; letter-spacing: -0.53px; line-height: 32px; text-align: right; }
+  .inv-title-block .inv-num  { font-size: 14px; color: #826a6a; letter-spacing: -0.15px; line-height: 20px; text-align: right; padding-top: 4px; }
+  .inv-pending-badge {
+    display: inline-block; background: #fefce8; border: 1px solid #fff085;
+    border-radius: 8px; padding: 3px 10px; margin-top: 8px; align-self: flex-end;
+    font-weight: 600; font-size: 10px; color: #a65f00; letter-spacing: 0.37px; text-transform: uppercase;
+  }
+
+  /* address row */
+  .inv-addresses { display: flex; gap: 24px; align-items: flex-start; padding-bottom: 32px; }
+  .inv-addr-col { width: 213px; flex-shrink: 0; display: flex; flex-direction: column; }
+  .inv-addr-col.right { align-items: flex-end; text-align: right; }
+  .inv-addr-label { font-size: 12px; color: #826a6a; letter-spacing: 0.6px; text-transform: uppercase; line-height: 16px; white-space: nowrap; }
+  .inv-addr-name  { font-weight: 600; font-size: 14px; color: #281010; letter-spacing: -0.15px; line-height: 20px; padding-top: 4px; }
+  .inv-addr-line  { font-size: 14px; color: #654a4a; letter-spacing: -0.15px; line-height: 20px; }
+  .inv-meta-group { display: flex; flex-direction: column; align-items: flex-end; }
+  .inv-meta-group + .inv-meta-group { padding-top: 8px; }
+  .inv-meta-label { font-size: 12px; color: #826a6a; letter-spacing: 0.6px; text-transform: uppercase; line-height: 16px; white-space: nowrap; }
+  .inv-meta-val   { font-weight: 600; font-size: 14px; color: #281010; letter-spacing: -0.15px; line-height: 20px; }
+
+  /* summary band */
+  .inv-summary-band {
+    display: flex; gap: 16px; background: #fcfbfb; border: 1px solid #ebe5e5;
+    border-radius: 10px; padding: 16px; margin-bottom: 32px;
+  }
+  .inv-summary-col { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .inv-summary-label { font-size: 12px; color: #826a6a; letter-spacing: 0.6px; text-transform: uppercase; line-height: 16px; }
+  .inv-summary-val   { font-weight: 600; font-size: 14px; color: #281010; letter-spacing: -0.15px; line-height: 20px; }
+
+  /* line items table */
+  .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+  .inv-table th {
+    font-weight: 600; font-size: 14px; color: #281010; letter-spacing: -0.15px;
+    padding: 9px 0; border-bottom: 2px solid #281010; text-align: left;
+  }
+  .inv-table th.right { text-align: right; }
+  .inv-table td {
+    font-size: 14px; padding: 12px 0; border-bottom: 1px solid #ebe5e5; vertical-align: top;
+  }
+  .inv-table td.desc { font-weight: 500; color: #281010; width: 310px; }
+  .inv-table td.detail { color: #826a6a; width: 329px; }
+  .inv-table td.detail .cash-note { font-weight: 700; font-size: 12px; color: #281010; display: block; margin-top: 2px; }
+  .inv-table td.amount { font-weight: 600; color: #281010; text-align: right; white-space: nowrap; }
+
+  /* totals */
+  .inv-totals { display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 32px; }
+  .inv-totals-row {
+    display: flex; justify-content: space-between; width: 256px;
+    padding: 6px 0 7px; border-bottom: 1px solid #ebe5e5;
+  }
+  .inv-totals-row .t-label { font-size: 14px; color: #654a4a; letter-spacing: -0.15px; }
+  .inv-totals-row .t-val   { font-weight: 500; font-size: 14px; color: #281010; letter-spacing: -0.15px; }
+  .inv-total-due {
+    display: flex; justify-content: space-between; width: 256px;
+    padding: 14px 0 10px;
+  }
+  .inv-total-due .t-label { font-weight: 700; font-size: 16px; color: #281010; letter-spacing: -0.31px; }
+  .inv-total-due .t-val   { font-weight: 700; font-size: 16px; color: #281010; letter-spacing: -0.31px; }
+
+  /* payment instructions */
+  .inv-payment {
+    background: #f5f3f3; border: 1px solid #dcd1d1; border-radius: 10px;
+    padding: 17px 21px; margin-bottom: 32px;
+  }
+  .inv-payment-title { font-weight: 600; font-size: 14px; color: #281010; letter-spacing: -0.15px; line-height: 20px; margin-bottom: 8px; }
+  .inv-payment-cols { display: flex; gap: 16px; }
+  .inv-payment-col { flex: 1; display: flex; flex-direction: column; gap: 0; }
+  .inv-payment-col p { font-size: 14px; color: #654a4a; letter-spacing: -0.15px; line-height: 20px; }
+  .inv-payment-col .p-head { font-weight: 500; color: #281010; }
+  .inv-payment-col .p-ref  { font-weight: 600; color: #281010; }
+
+  /* terms */
+  .inv-terms { border-top: 1px solid #ebe5e5; padding-top: 17px; margin-bottom: 24px; }
+  .inv-terms-title { font-weight: 600; font-size: 12px; color: #654a4a; line-height: 16px; }
+  .inv-terms-body  { font-size: 12px; color: #826a6a; line-height: 16px; }
+
+  /* footer */
+  .inv-footer {
+    border-top: 1px solid #ebe5e5; padding-top: 17px;
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: #826a6a; line-height: 16px;
+  }
+
+  /* ── Confirmation overlay ── */
+  .confirm-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .confirm-backdrop.open { display: flex; }
+
+  .confirm-modal {
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.2);
+    padding: 36px 32px; width: 420px; max-width: 95vw;
+    display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center;
+  }
+  .confirm-icon {
+    width: 52px; height: 52px; background: #e8f5e9; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .confirm-icon svg { width: 28px; height: 28px; }
+  .confirm-title { font-weight: 700; font-size: 18px; color: #0a0a0a; letter-spacing: -0.29px; }
+  .confirm-sub { font-size: 14px; color: #654a4a; line-height: 21px; letter-spacing: -0.15px; }
+  .confirm-btns { display: flex; gap: 12px; width: 100%; }
+  .confirm-btn {
+    flex: 1; padding: 10px 0; border-radius: 6.75px;
+    font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px;
+    cursor: pointer; letter-spacing: -0.15px; transition: background 0.15s, opacity 0.15s;
+    border: 1px solid transparent;
+  }
+  .confirm-btn.primary { background: #0a0a0a; color: #fff; }
+  .confirm-btn.primary:hover { background: #2a0808; }
+  .confirm-btn.secondary { background: #fff; color: #8b8a8a; border-color: #dcd1d1; opacity: 0.5; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<!-- ── Top nav ── -->
+<nav class="topnav">
+  <div class="topnav-left">
+    <button class="back-btn" onclick="history.back()">
+      <img src="https://www.figma.com/api/mcp/asset/cc88dd9a-087c-4ca7-90df-618b457d9b29" alt="" />
+      Back to Request
+    </button>
+    <span class="nav-sep">|</span>
+    <span class="nav-invoice-id">Invoice Preview — INV-REQ-2024-001</span>
+  </div>
+  <div class="topnav-right">
+    <button class="nav-btn" onclick="window.print()">
+      <img src="https://www.figma.com/api/mcp/asset/52eef209-f0b5-44fa-8566-06910d00585d" alt="" />
+      Print
+    </button>
+    <button class="nav-btn">
+      <img src="https://www.figma.com/api/mcp/asset/2950da3d-9441-4660-b512-6733adee26ff" alt="" />
+      Download PDF
+    </button>
+    <button class="nav-btn-primary" onclick="openConfirm()">
+      <img src="https://www.figma.com/api/mcp/asset/80c47ce6-9b4f-43cd-95c5-92d72d7dce77" alt="" />
+      Send and Approve
+    </button>
+  </div>
+</nav>
+
+<!-- ── Page body ── -->
+<div class="page-body">
+  <div class="invoice-doc">
+
+    <!-- Header -->
+    <div class="inv-header">
+      <div class="inv-brand">
+        <img src="https://www.figma.com/api/mcp/asset/603edfb9-7694-400f-921a-ee8cba5dfd38" alt="Royal Tours" />
+        <div>
+          <div class="inv-brand-name">Royal Tours</div>
+          <div class="inv-brand-sub">Partner Portal</div>
+        </div>
+      </div>
+      <div class="inv-title-block">
+        <span class="inv-word">INVOICE</span>
+        <span class="inv-num">INV-REQ-2024-001</span>
+        <span class="inv-pending-badge">Pending</span>
+      </div>
+    </div>
+
+    <!-- Addresses -->
+    <div class="inv-addresses">
+      <!-- From -->
+      <div class="inv-addr-col">
+        <div class="inv-addr-label">From</div>
+        <div class="inv-addr-name">Royal Tours</div>
+        <div class="inv-addr-line">1055 Canada Place, Vancouver, BC V6C 0C3</div>
+        <div class="inv-addr-line">bookings@royaltours.com</div>
+        <div class="inv-addr-line">+1-604-800-0001</div>
+      </div>
+      <!-- Bill To -->
+      <div class="inv-addr-col">
+        <div class="inv-addr-label">Bill To</div>
+        <div class="inv-addr-name">Bluebird Travel</div>
+        <div class="inv-addr-line">Attn: Cindy Kim</div>
+        <div class="inv-addr-line">cindy@bluebirdtravel.com</div>
+        <div class="inv-addr-line">+1-604-123-4567</div>
+      </div>
+      <!-- Dates -->
+      <div class="inv-addr-col right">
+        <div class="inv-meta-group">
+          <div class="inv-meta-label">Issue Date</div>
+          <div class="inv-meta-val">2026-04-28</div>
+        </div>
+        <div class="inv-meta-group">
+          <div class="inv-meta-label">Due Date</div>
+          <div class="inv-meta-val">2026-05-28</div>
+        </div>
+        <div class="inv-meta-group">
+          <div class="inv-meta-label">Booking Ref</div>
+          <div class="inv-meta-val">REQ-2024-001</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary band -->
+    <div class="inv-summary-band">
+      <div class="inv-summary-col">
+        <div class="inv-summary-label">Travel Dates</div>
+        <div class="inv-summary-val">2026-02-10 – 2026-02-13</div>
+      </div>
+      <div class="inv-summary-col">
+        <div class="inv-summary-label">Tour Package</div>
+        <div class="inv-summary-val">Rockies 3N</div>
+      </div>
+      <div class="inv-summary-col">
+        <div class="inv-summary-label">Passengers (4)</div>
+        <div class="inv-summary-val">Kevin, Minsu, Brian, David</div>
+      </div>
+    </div>
+
+    <!-- Line items -->
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th style="width:310px">Description</th>
+          <th>Detail</th>
+          <th class="right">Amount (CAD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="desc">Rockies 3N Tour Package</td>
+          <td class="detail">4 passengers × 3 nights</td>
+          <td class="amount">2,556.00</td>
+        </tr>
+        <tr>
+          <td class="desc">Gondola + Lunch Buffet</td>
+          <td class="detail">4/4 pax (3 adults, 1 child)</td>
+          <td class="amount">480.00</td>
+        </tr>
+        <tr>
+          <td class="desc">Columbia Icefield Glacier Adventure Tour (Snow Coach)</td>
+          <td class="detail">
+            4/4 pax (3 adults, 1 child)
+            <span class="cash-note">Pay Cash at Destination</span>
+          </td>
+          <td class="amount">320.00</td>
+        </tr>
+        <tr>
+          <td class="desc">Meal Plan</td>
+          <td class="detail">
+            4/4 people
+            <span class="cash-note">Pay Cash at Destination</span>
+          </td>
+          <td class="amount">416.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Totals -->
+    <div class="inv-totals">
+      <div class="inv-totals-row">
+        <span class="t-label">Subtotal</span>
+        <span class="t-val">CAD 3,036.00</span>
+      </div>
+      <div class="inv-totals-row">
+        <span class="t-label">GST (5% on Tour Package)</span>
+        <span class="t-val">CAD 127.80</span>
+      </div>
+      <div class="inv-total-due">
+        <span class="t-label">Total Due</span>
+        <span class="t-val">CAD 3,163.80</span>
+      </div>
+    </div>
+
+    <!-- Payment instructions -->
+    <div class="inv-payment">
+      <div class="inv-payment-title">Payment Instructions</div>
+      <div class="inv-payment-cols">
+        <div class="inv-payment-col">
+          <p class="p-head">Bank Transfer</p>
+          <p>Bank: Royal Bank of Canada</p>
+          <p>Account: 1234-567-890</p>
+          <p>Transit: 00012</p>
+        </div>
+        <div class="inv-payment-col">
+          <p class="p-head">Reference</p>
+          <p>Please include invoice number</p>
+          <p class="p-ref">INV-REQ-2024-001</p>
+          <p>in your payment reference.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    <div class="inv-terms">
+      <div class="inv-terms-title">Terms &amp; Notes</div>
+      <div class="inv-terms-body">Payment terms: 50% deposit due upon confirmation. Balance due 30 days prior to departure. All prices in CAD.</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="inv-footer">
+      <span>Royal Tours · 1055 Canada Place, Vancouver, BC · bookings@royaltours.com</span>
+      <span>INV-REQ-2024-001</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Confirmation popup ── -->
+<div class="confirm-backdrop" id="confirmBackdrop">
+  <div class="confirm-modal">
+    <div class="confirm-icon">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="14" r="14" fill="#00a63e" fill-opacity="0.15"/>
+        <path d="M8 14.5l4.5 4.5 7.5-9" stroke="#00a63e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="confirm-title">Invoice Sent &amp; Approved</div>
+      <div class="confirm-sub" style="margin-top:8px">The invoice has been sent to Bluebird Travel and the booking has been confirmed.</div>
+    </div>
+    <div class="confirm-btns">
+      <button class="confirm-btn primary" onclick="returnToDashboard()">Return to Dashboard</button>
+      <button class="confirm-btn secondary" title="Coming soon" disabled>Contact Rep</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openConfirm() {
+    document.getElementById('confirmBackdrop').classList.add('open');
+  }
+
+  function returnToDashboard() {
+    // Signal the dashboard to update confirmed count and close the modal
+    if (window.opener && !window.opener.closed) {
+      window.opener.onInvoiceApproved();
+      window.close();
+    } else {
+      // Navigated directly — go back to admin page
+      sessionStorage.setItem('invoiceApproved', '1');
+      window.location.href = 'admin.html';
+    }
+  }
+</script>
+</body>
+</html>
