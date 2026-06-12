@@ -60,39 +60,65 @@
   /* ── Login Screen ── */
   #loginScreen {
     position: fixed; inset: 0; z-index: 10000;
-    background: #fbf9f9;
     display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
   }
   #loginScreen.hidden { display: none; }
+  .login-bg {
+    position: fixed; inset: 0;
+    background: url('login-bg2.jpg') center center / cover no-repeat;
+    z-index: 0;
+  }
+  .login-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1;
+  }
   .login-card {
-    background: #fff; border: 1px solid #ebe5e5; border-radius: 16px;
-    padding: 48px 44px 44px; width: 420px; display: flex; flex-direction: column;
-    align-items: center; gap: 0;
+    position: relative; z-index: 2;
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 25px 25px rgba(0,0,0,0.25);
+    width: 392px; padding: 32px 0;
+    display: flex; flex-direction: column; align-items: center;
   }
   .login-logo-wrap {
-    display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 32px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; padding: 8px 0 0; width: 350px;
   }
-  .login-logo-wrap img { height: 36px; border-radius: 4px; }
-  .login-brand { font-weight: 700; font-size: 22px; color: #281010; letter-spacing: -0.4px; }
-  .login-sub { font-size: 13px; color: #826a6a; letter-spacing: -0.1px; margin-top: 2px; }
-  .login-divider { width: 100%; height: 1px; background: #ebe5e5; margin-bottom: 28px; }
-  .login-welcome { font-weight: 600; font-size: 17px; color: #140303; letter-spacing: -0.3px; align-self: flex-start; margin-bottom: 6px; }
-  .login-hint { font-size: 12.5px; color: #826a6a; align-self: flex-start; margin-bottom: 24px; }
-  .login-field { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-bottom: 16px; }
-  .login-field label { font-size: 12.25px; font-weight: 500; color: #281010; letter-spacing: -0.1px; }
+  .login-logo-wrap img { height: 25px; width: 86px; object-fit: cover; border-radius: 4px; }
+  .login-brand { font-weight: 700; font-size: 20px; line-height: 28px; letter-spacing: -0.36px; color: #281010; text-align: center; }
+  .login-sub { font-weight: 400; font-size: 10.5px; line-height: 14px; letter-spacing: -0.018px; color: #654a4a; text-align: center; }
+  .login-divider { width: 100%; height: 1px; background: #ebe5e5; margin-top: 16px; }
+  .login-welcome-header { padding: 24px 21px 0; width: 100%; display: flex; flex-direction: column; gap: 6px; }
+  .login-welcome { font-weight: 600; font-size: 17px; letter-spacing: -0.3px; color: #140303; }
+  .login-hint { font-weight: 400; font-size: 12.5px; color: #826a6a; }
+  .login-content { padding: 20px 21px 0; width: 100%; }
+  .login-form { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+  .login-field { display: flex; flex-direction: column; gap: 7px; }
+  .login-field label { font-weight: 500; font-size: 14px; line-height: 19px; letter-spacing: -0.018px; color: #533636; }
   .login-field input {
-    height: 42px; border-radius: 8px; border: 1px solid #dcd1d1;
-    padding: 0 14px; font-size: 13.5px; font-family: 'Inter', sans-serif;
-    color: #140303; background: #fff; outline: none; transition: border-color 0.15s;
+    background: #f5f3f3; border: 1px solid #dcd1d1; border-radius: 8.75px;
+    height: 42px; padding: 3.5px 14px; font-family: 'Inter', sans-serif;
+    font-weight: 400; font-size: 14px; line-height: 19px; letter-spacing: -0.018px;
+    color: #281010; width: 100%; outline: none; transition: border-color 0.15s;
   }
-  .login-field input:focus { border-color: #140303; }
-  .login-forgot { align-self: flex-end; font-size: 12px; color: #826a6a; text-decoration: none; margin-bottom: 28px; cursor: pointer; }
+  .login-field input:focus { border-color: #b0a0a0; }
+  .login-forgot { font-weight: 400; font-size: 12px; color: #826a6a; text-align: right; text-decoration: none; margin-top: -6px; cursor: pointer; }
+  .login-forgot:hover { text-decoration: underline; }
   .login-btn {
-    width: 100%; height: 44px; background: #140303; color: #fff; border: none;
-    border-radius: 8px; font-size: 14px; font-weight: 500; font-family: 'Inter', sans-serif;
-    cursor: pointer; letter-spacing: -0.1px; transition: background 0.15s;
+    background: #0a0a0a; color: #fff; border: none; border-radius: 8.75px;
+    height: 42px; width: 100%; font-family: 'Inter', sans-serif;
+    font-weight: 500; font-size: 14px; line-height: 19px; letter-spacing: -0.018px;
+    cursor: pointer; transition: background 0.15s;
   }
-  .login-btn:hover { background: #2a0808; }
+  .login-btn:hover { background: #2a2a2a; }
+  .login-make-account {
+    display: flex; gap: 4px; justify-content: center; align-items: center;
+    padding-top: 16px; font-size: 12.5px;
+  }
+  .login-make-account .muted { font-weight: 400; color: #826a6a; }
+  .login-make-account .link { font-weight: 500; color: #140303; cursor: pointer; }
+  .login-make-account .link:hover { text-decoration: underline; }
 
   /* ── Step Indicator ── */
   .step-indicator { display: flex; gap: 20px; height: 120px; }
@@ -751,26 +777,39 @@
 </main>
 
 <div id="loginScreen">
+  <div class="login-bg"></div>
+  <div class="login-overlay"></div>
   <div class="login-card">
     <div class="login-logo-wrap">
-      <img src="https://www.figma.com/api/mcp/asset/bdbd4277-91f4-42f8-8f6c-fcddf8a5f9d6" alt="Royal Tours logo" style="height:36px;border-radius:4px;" />
-      <div class="login-brand">Royal Tours</div>
-      <div class="login-sub">Partner Portal</div>
+      <img src="https://www.figma.com/api/mcp/asset/bdbd4277-91f4-42f8-8f6c-fcddf8a5f9d6" alt="Royal Tours logo" />
+      <div>
+        <div class="login-brand">Royal Tours</div>
+        <div class="login-sub">Partner Portal</div>
+      </div>
     </div>
     <div class="login-divider"></div>
-    <div class="login-welcome">Welcome back</div>
-    <div class="login-hint">Sign in to your partner account to continue.</div>
-    <div class="login-field">
-      <label>Email</label>
-      <input type="email" id="loginEmail" value="cindy@bluebirdtravel.com" />
+    <div class="login-welcome-header">
+      <div class="login-welcome">Welcome back</div>
+      <div class="login-hint">Sign in to your partner account to continue.</div>
     </div>
-    <div class="login-field">
-      <label>Password</label>
-      <input type="password" id="loginPassword" value="Bluebird2026!" />
+    <div class="login-content">
+      <div class="login-form">
+        <div class="login-field">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" value="cindy@bluebirdtravel.com" autocomplete="email" />
+        </div>
+        <div class="login-field">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" value="Bluebird2026!" autocomplete="current-password" />
+        </div>
+        <span class="login-forgot">Forgot password?</span>
+        <button class="login-btn" onclick="doLogin()">Login</button>
+        <div class="login-make-account">
+          <span class="muted">Don't have an account?</span>
+          <span class="link">Make an account</span>
+        </div>
+      </div>
     </div>
-    <span class="login-forgot">Forgot password?</span>
-    <button class="login-btn" onclick="doLogin()">Login</button>
-    <p style="margin-top:20px;font-size:12.5px;color:#826a6a;">Don't have an account? <a href="#" style="color:#140303;font-weight:500;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Make an account</a></p>
   </div>
 </div>
 
