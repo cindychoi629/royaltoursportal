@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Royal Tours – Partner Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #fbf9f9; min-height: 100vh; display: flex; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 224px; height: 100vh; background: #fff;
+    border-right: 1px solid #ebe5e5; display: flex; flex-direction: column; flex-shrink: 0;
+    position: sticky; top: 0;
+  }
+  .sidebar-logo {
+    padding: 21px; border-bottom: 1px solid #ebe5e5; display: flex; flex-direction: column;
+    align-items: center; gap: 12px; height: 132px;
+  }
+  .sidebar-logo img { height: 25px; border-radius: 4px; }
+  .sidebar-logo .company { font-weight: 700; font-size: 21px; color: #281010; letter-spacing: -0.36px; }
+  .sidebar-logo .portal  { font-size: 12.25px; color: #654a4a; letter-spacing: -0.02px; }
+
+  .sidebar-agent {
+    background: #fbf9f9; border-bottom: 1px solid #ebe5e5;
+    padding: 21px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .sidebar-agent .label { font-size: 12.25px; color: #826a6a; display: flex; align-items: center; gap: 6px; }
+  .sidebar-agent .name  { font-weight: 500; font-size: 15.75px; color: #281010; }
+  .sidebar-agent .agency { font-size: 12.25px; color: #654a4a; }
+
+  .sidebar-nav { flex: 1; padding: 21px; display: flex; flex-direction: column; gap: 7px; }
+  .nav-item {
+    height: 42px; border-radius: 6.75px; display: flex; align-items: center;
+    padding: 0 10.5px; gap: 12px; cursor: pointer; font-size: 12.25px; color: #533636;
+    transition: background 0.15s;
+  }
+  .nav-item:hover { background: #f5f3f3; }
+  .nav-item.active { background: #1c1c1c; color: #fff; }
+  .nav-item img { width: 14px; height: 14px; }
+
+  .sidebar-footer { border-top: 1px solid #ebe5e5; padding: 22px 21px; position: sticky; bottom: 0; background: #fff; }
+  .logout-btn {
+    height: 42px; border-radius: 6.75px; border: 1px solid rgba(0,0,0,.1);
+    background: #fff; display: flex; align-items: center; padding: 0 10.5px; gap: 12px;
+    cursor: pointer; font-size: 12.25px; color: #533636; width: 100%;
+  }
+  .logout-btn img { width: 14px; height: 14px; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .content { max-width: 1200px; width: 100%; padding: 42px; display: flex; flex-direction: column; gap: 28px; }
+
+  .form-title { text-align: center; font-weight: 500; font-size: 21px; color: #0a0a0a; letter-spacing: -0.36px; }
+
+  /* ── Login Screen ── */
+  #loginScreen {
+    position: fixed; inset: 0; z-index: 10000;
+    background: #fbf9f9;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #loginScreen.hidden { display: none; }
+  .login-card {
+    background: #fff; border: 1px solid #ebe5e5; border-radius: 16px;
+    padding: 48px 44px 44px; width: 420px; display: flex; flex-direction: column;
+    align-items: center; gap: 0;
+  }
+  .login-logo-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 32px;
+  }
+  .login-logo-wrap img { height: 36px; border-radius: 4px; }
+  .login-brand { font-weight: 700; font-size: 22px; color: #281010; letter-spacing: -0.4px; }
+  .login-sub { font-size: 13px; color: #826a6a; letter-spacing: -0.1px; margin-top: 2px; }
+  .login-divider { width: 100%; height: 1px; background: #ebe5e5; margin-bottom: 28px; }
+  .login-welcome { font-weight: 600; font-size: 17px; color: #140303; letter-spacing: -0.3px; align-self: flex-start; margin-bottom: 6px; }
+  .login-hint { font-size: 12.5px; color: #826a6a; align-self: flex-start; margin-bottom: 24px; }
+  .login-field { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-bottom: 16px; }
+  .login-field label { font-size: 12.25px; font-weight: 500; color: #281010; letter-spacing: -0.1px; }
+  .login-field input {
+    height: 42px; border-radius: 8px; border: 1px solid #dcd1d1;
+    padding: 0 14px; font-size: 13.5px; font-family: 'Inter', sans-serif;
+    color: #140303; background: #fff; outline: none; transition: border-color 0.15s;
+  }
+  .login-field input:focus { border-color: #140303; }
+  .login-forgot { align-self: flex-end; font-size: 12px; color: #826a6a; text-decoration: none; margin-bottom: 28px; cursor: pointer; }
+  .login-btn {
+    width: 100%; height: 44px; background: #140303; color: #fff; border: none;
+    border-radius: 8px; font-size: 14px; font-weight: 500; font-family: 'Inter', sans-serif;
+    cursor: pointer; letter-spacing: -0.1px; transition: background 0.15s;
+  }
+  .login-btn:hover { background: #2a0808; }
+
+  /* ── Step Indicator ── */
+  .step-indicator { display: flex; gap: 20px; height: 120px; }
+  .step-col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .step-header { display: flex; gap: 8px; align-items: center; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; border: 2px solid #dcd1d1; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.25px; font-weight: 500; color: #826a6a; flex-shrink: 0;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    box-shadow: 0 2px 2px rgba(0,0,0,.1), 0 4px 3px rgba(0,0,0,.1);
+  }
+  .step-num.done, .step-num.active { background: #140303; border-color: #1c1c1c; color: #fff; }
+  .step-label { font-weight: 500; font-size: 14px; color: #826a6a; letter-spacing: -0.15px; white-space: nowrap; transition: color 0.2s; }
+  .step-label.done, .step-label.active { color: #140303; }
+  .step-line { flex: 1; height: 2px; background: #ebe5e5; transition: background 0.2s; }
+  .step-line.done, .step-line.active { background: #140303; }
+  .step-sub { padding-left: 36px; display: flex; flex-direction: column; gap: 1.75px; }
+  .step-sub span { font-size: 10.5px; color: #af9999; letter-spacing: 0.09px; transition: color 0.2s; }
+  .step-sub span.active, .step-sub span.done { color: #654a4a; }
+
+  /* ── Card ── */
+  .card { background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 12.75px; padding: 28px; }
+  .section-title { font-weight: 700; font-size: 24px; color: #281010; letter-spacing: -0.44px; margin-bottom: 4px; }
+  .section-sub { font-size: 14px; color: #654a4a; letter-spacing: -0.15px; margin-bottom: 12px; }
+  .divider { height: 1px; background: rgba(0,0,0,.1); margin: 0 0 20px; }
+
+  .field-group-title { font-weight: 600; font-size: 18px; color: #281010; letter-spacing: -0.44px; margin-bottom: 12px; }
+  .row { display: flex; gap: 12px; margin-bottom: 16px; }
+  .row:last-child { margin-bottom: 0; }
+  .field { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .field label { font-weight: 500; font-size: 14px; color: #0a0a0a; letter-spacing: -0.02px; }
+  .field input, .field select, .field textarea {
+    height: 44px; border-radius: 6.75px; border: 1px solid transparent; background: #f5f3f3;
+    padding: 0 10.5px; font-size: 14px; font-family: 'Inter', sans-serif; color: #0a0a0a;
+    outline: none; transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: rgba(0,0,0,.2); }
+  .field textarea { height: 70px; padding: 7px 10.5px; resize: vertical; }
+  .field input[readonly] { background: #fbf9f9; cursor: default; }
+  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 5l4 4 4-4' stroke='%23827171' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; padding-right: 30px; }
+
+  /* ── Customer table ── */
+  .customer-table { border: 1px solid rgba(0,0,0,.1); border-radius: 8.75px; overflow: hidden; }
+
+  /* shared grid: Name 90 | Phone 100 | Gender 100 | Occ 110 | Price 90 | Meet 1fr | Send 1fr | Actions 84 */
+  .customer-cols {
+    display: grid;
+    grid-template-columns: 90px 100px 100px 110px 90px minmax(0,1fr) minmax(0,1fr) 84px;
+    gap: 12px;
+    padding: 0 14px;
+    min-width: 0;
+  }
+  .customer-header { background: #fbf9f9; border-bottom: 1px solid rgba(0,0,0,.1); padding-top: 10px; padding-bottom: 10px; }
+  .customer-header span { font-weight: 500; font-size: 14px; color: #533636; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
+  .customer-row { background: #fff; padding-top: 8px; padding-bottom: 8px; }
+  .customer-row .field { min-width: 0; }
+  .customer-row .field input, .customer-row .field select { height: 44px; font-size: 12.25px; width: 100%; }
+  .customer-row .field input[readonly] { color: #827171; font-size: 12px; }
+  .customer-actions-cell { display: flex; gap: 7px; align-items: flex-start; }
+  .add-btn {
+    border: 1px solid rgba(0,0,0,.1); background: #fff; border-radius: 6.75px;
+    padding: 8px 10px; font-size: 14px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; color: #0a0a0a; font-family: 'Inter', sans-serif;
+  }
+  .add-btn:hover { background: #f5f3f3; }
+  .icon-btn {
+    width: 38.5px; height: 38.5px; border-radius: 6.75px; border: 1px solid rgba(0,0,0,.1);
+    background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn:hover { background: #f5f3f3; }
+  .icon-btn.danger:hover { background: #fff0f0; }
+  .row-actions { display: flex; gap: 7px; padding-top: 8px; }
+
+  /* ── Flight table ── */
+  .flight-row {
+    display: grid;
+    grid-template-columns: 37px repeat(6, minmax(0, 1fr)) 50px;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 12px;
+    min-width: 0;
+  }
+  .flight-row:last-child { margin-bottom: 0; }
+  .flight-num-col { width: 37px; min-width: 0; }
+  .flight-num-col label { font-size: 12px; visibility: hidden; }
+  .flight-num-cell { background: #f5f3f3; border-radius: 6.75px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 12.25px; color: #0a0a0a; border: 1px solid transparent; }
+  .flight-actions-col { width: 50px; min-width: 0; }
+  .flight-actions-col label { font-weight: 500; font-size: 12px; color: #0a0a0a; display: block; margin-bottom: 8px; }
+  .flight-row .field { min-width: 0; }
+  .flight-row .field input { width: 100%; min-width: 0; }
+
+  /* ── Step 2 Options ── */
+  .option-box { border: 1px solid rgba(0,0,0,.1); border-radius: 8.75px; padding: 16px; margin-bottom: 14px; }
+  .option-box:last-child { margin-bottom: 0; }
+  .checkbox-label { display: flex; gap: 16px; align-items: flex-start; cursor: pointer; }
+  .checkbox-label input[type=checkbox] { width: 14px; height: 14px; margin-top: 4px; flex-shrink: 0; accent-color: #140303; cursor: pointer; }
+  .checkbox-label .option-title { font-weight: 500; font-size: 14px; color: #0a0a0a; letter-spacing: -0.29px; display: flex; align-items: center; gap: 6px; }
+  .option-details { padding-left: 30px; margin-top: 14px; display: flex; flex-direction: column; gap: 20px; }
+  .option-qty-row { display: flex; gap: 16px; }
+  .option-qty-field { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+  .option-qty-field label { font-weight: 500; font-size: 12.25px; color: #0a0a0a; }
+  .option-qty-field select { height: 38.5px; border-radius: 6.75px; border: 1px solid transparent; background: #f5f3f3; padding: 0 11px; font-size: 12.25px; font-family: 'Inter', sans-serif; color: #0a0a0a; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 5l4 4 4-4' stroke='%23827171' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; padding-right: 30px; }
+  .option-qty-field input[readonly] { height: 38.5px; border-radius: 6.75px; border: none; background: #fbf9f9; padding: 0 10px; font-size: 12.25px; font-family: 'Inter', sans-serif; color: #0a0a0a; font-weight: 500; outline: none; width: 100%; }
+  .payment-section label.group-label { font-weight: 500; font-size: 12.25px; color: #0a0a0a; margin-bottom: 12px; display: block; }
+  .radio-option { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .radio-option:last-child { margin-bottom: 0; }
+  .radio-label { display: flex; gap: 7px; align-items: center; cursor: pointer; }
+  .radio-label input[type=radio] { width: 14px; height: 14px; accent-color: #140303; flex-shrink: 0; cursor: pointer; }
+  .radio-label span { font-weight: 500; font-size: 12.25px; color: #0a0a0a; }
+  .radio-note { font-size: 12.25px; color: #654a4a; padding-left: 21px; }
+
+  .meal-option-box { border: 1px solid rgba(0,0,0,.1); border-radius: 8.75px; padding: 15px; margin-bottom: 14px; }
+  .meal-option-box:last-child { margin-bottom: 0; }
+  .radio-box-label { display: flex; gap: 16px; align-items: center; cursor: pointer; }
+  .radio-box-label input[type=radio] { width: 14px; height: 14px; accent-color: #140303; flex-shrink: 0; cursor: pointer; }
+  .radio-box-label .box-title { font-weight: 500; font-size: 14px; color: #0a0a0a; letter-spacing: -0.29px; }
+  .meal-details { padding-left: 30px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+  .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+
+  /* ── Step 3 Review ── */
+  .review-block { background: #fbf9f9; border-radius: 8.75px; padding: 21px; margin-bottom: 20px; }
+  .review-block:last-child { margin-bottom: 0; }
+  .review-block-title { font-weight: 700; font-size: 18px; color: #0a0a0a; letter-spacing: -0.29px; margin-bottom: 14px; }
+  .review-inner { background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 3.5px; padding: 15px; margin-bottom: 12px; }
+  .review-row { display: flex; gap: 4px; margin-bottom: 12px; }
+  .review-row:last-child { margin-bottom: 0; }
+  .review-col { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .review-col .r-label { font-size: 14px; color: #0a0a0a; font-weight: 400; }
+  .review-col .r-val   { font-size: 14px; color: #0a0a0a; font-weight: 700; }
+  .review-notes { font-size: 12.25px; color: #654a4a; line-height: 1.6; }
+  .summary-box { background: rgba(202,35,35,.05); border: 1px solid rgba(202,35,35,.2); border-radius: 8.75px; padding: 22px; }
+  .summary-title { font-weight: 700; font-size: 18px; color: #140303; margin-bottom: 12px; }
+
+  /* ── Nav Buttons ── */
+  .nav-buttons { display: flex; justify-content: space-between; align-items: center; }
+  .btn-prev {
+    border: 1px solid rgba(0,0,0,.1); background: #fff; border-radius: 6.75px;
+    padding: 8px 12px; font-size: 12.25px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; font-family: 'Inter', sans-serif; color: #0a0a0a;
+    transition: background 0.15s;
+  }
+  .btn-prev:hover { background: #f5f3f3; }
+  .btn-prev:disabled { opacity: 0.4; cursor: default; }
+  .btn-next {
+    background: #140303; border: none; border-radius: 6.75px; color: #fff;
+    padding: 8px 12px; font-size: 12.25px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 3px; font-family: 'Inter', sans-serif;
+    transition: background 0.15s;
+  }
+  .btn-next:hover { background: #2a0808; }
+  .btn-submit {
+    background: #140303; border: none; border-radius: 6.75px; color: #fff;
+    padding: 8px 28px; font-size: 12.25px; font-weight: 500; cursor: pointer;
+    font-family: 'Inter', sans-serif; height: 35px; transition: background 0.15s;
+  }
+  .btn-submit:hover { background: #2a0808; }
+
+  /* ── Confirmation overlay ── */
+  #preSubmitOverlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  #preSubmitOverlay.show { opacity: 1; pointer-events: all; }
+  #preSubmitOverlay .confirm-modal { transform: translateY(8px); transition: transform 0.25s; }
+  #preSubmitOverlay.show .confirm-modal { transform: translateY(0); }
+
+  #confirmOverlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  #confirmOverlay.show { opacity: 1; pointer-events: all; }
+  .confirm-modal {
+    background: #fff; border-radius: 14px; padding: 42px 40px 36px;
+    max-width: 420px; width: 90%; display: flex; flex-direction: column;
+    align-items: center; gap: 16px; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    transform: translateY(8px); transition: transform 0.25s;
+  }
+  #confirmOverlay.show .confirm-modal { transform: translateY(0); }
+  .confirm-check {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #e8f7ee; display: flex; align-items: center; justify-content: center;
+  }
+  .confirm-check svg { width: 26px; height: 26px; }
+  .confirm-title { font-weight: 700; font-size: 18px; color: #0a0a0a; letter-spacing: -0.3px; }
+  .confirm-sub { font-size: 14px; color: #654a4a; line-height: 1.6; letter-spacing: -0.15px; }
+  .confirm-actions { display: flex; gap: 10px; margin-top: 8px; width: 100%; }
+  .confirm-actions .btn-dashboard {
+    flex: 1; background: #140303; color: #fff; border: none; border-radius: 7px;
+    padding: 10px 16px; font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: background 0.15s;
+  }
+  .confirm-actions .btn-dashboard:hover { background: #2a0808; }
+  .confirm-actions .btn-contact {
+    flex: 1; background: #fff; color: #0a0a0a; border: 1px solid rgba(0,0,0,.15);
+    border-radius: 7px; padding: 10px 16px; font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.15s;
+  }
+  .confirm-actions .btn-contact:hover { background: #f5f3f3; }
+
+  /* Step panel visibility */
+  .step-panel { display: none; }
+  .step-panel.active { display: flex; flex-direction: column; gap: 28px; }
+
+  .checkbox-row { display: flex; align-items: center; gap: 8px; }
+  .checkbox-row input[type=checkbox] { width: 14px; height: 14px; accent-color: #140303; }
+  .checkbox-row label { font-weight: 500; font-size: 14px; color: #0a0a0a; cursor: pointer; }
+
+  /* ── Validation ── */
+  .field input.invalid, .field select.invalid {
+    background: #fef2f3 !important;
+    border-color: #ca2323 !important;
+  }
+  .field-error {
+    background: #fef2f3; border-radius: 8px; padding: 6px 8px;
+    color: #e7000b; font-size: 12.25px; line-height: 17.5px;
+    letter-spacing: -0.02px; display: none;
+  }
+  .field-error.show { display: block; }
+
+  @media (max-width: 900px) {
+    .sidebar { width: 180px; }
+    .row { flex-direction: column; }
+    .col-name,.col-phone,.col-gender,.col-occ,.col-price,.col-meet,.col-send,.col-actions { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://www.figma.com/api/mcp/asset/bdbd4277-91f4-42f8-8f6c-fcddf8a5f9d6" alt="Royal Tours logo" />
+    <div>
+      <div class="company" style="text-align:center">Royal Tours</div>
+      <div class="portal" style="text-align:center">Partner Portal</div>
+    </div>
+  </div>
+  <div class="sidebar-agent">
+    <div class="label">
+      <img src="https://www.figma.com/api/mcp/asset/8aad1bb1-863b-45e9-a66f-2deb7f4ad44e" alt="" style="width:14px;height:14px" />
+      Agent
+    </div>
+    <div class="name">Cindy</div>
+    <div class="agency">Bluebird Travel Agency</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active">
+      <img src="https://www.figma.com/api/mcp/asset/45ad2923-6541-4101-a406-190eeb2b3b6e" alt="" />
+      Request Bookings
+    </div>
+    <div class="nav-item">
+      <img src="https://www.figma.com/api/mcp/asset/bbff58f2-572f-4dc4-910d-6e85f56f7b75" alt="" />
+      Manage Bookings
+    </div>
+    <div class="nav-item">
+      <img src="https://www.figma.com/api/mcp/asset/f9e81c27-ec6b-4322-b941-d06d63a1487e" alt="" />
+      Bookings Inquiries
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="logout-btn" onclick="doLogout()">
+      <img src="https://www.figma.com/api/mcp/asset/9beee9b7-bcaa-4e3a-8bd7-da54bef3ef6c" alt="" />
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main class="main">
+<div class="content">
+
+  <h1 class="form-title">Tour Booking Request Form</h1>
+
+  <!-- Step Indicator -->
+  <div class="step-indicator" id="stepIndicator">
+    <!-- Step 1 -->
+    <div class="step-col" id="stepCol1">
+      <div class="step-header">
+        <div class="step-num active" id="stepNum1">1</div>
+        <div class="step-label active" id="stepLbl1">Basics</div>
+        <div class="step-line active" id="stepLine1"></div>
+      </div>
+      <div class="step-sub" id="stepSub1">
+        <span class="active">Agent Information</span>
+        <span class="active">Travel Information</span>
+        <span class="active">Customer Information</span>
+        <span class="active">Flight Information</span>
+      </div>
+    </div>
+    <!-- Step 2 -->
+    <div class="step-col" id="stepCol2">
+      <div class="step-header">
+        <div class="step-num" id="stepNum2">2</div>
+        <div class="step-label" id="stepLbl2">Options</div>
+        <div class="step-line" id="stepLine2"></div>
+      </div>
+      <div class="step-sub" id="stepSub2">
+        <span>Optional Tours</span>
+        <span>Meal Plan</span>
+      </div>
+    </div>
+    <!-- Step 3 -->
+    <div class="step-col" id="stepCol3">
+      <div class="step-header">
+        <div class="step-num" id="stepNum3">3</div>
+        <div class="step-label" id="stepLbl3">Review</div>
+        <div class="step-line" id="stepLine3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ STEP 1 ════════════ -->
+  <div class="step-panel active" id="panel1">
+    <div class="card">
+      <div class="section-title">Basic Information</div>
+      <div class="section-sub">Please fill out the information below.</div>
+      <hr class="divider" />
+
+      <!-- Agent Info -->
+      <div class="field-group-title">Agent Information</div>
+      <div class="row">
+        <div class="field">
+          <label>Date of Request</label>
+          <input type="text" id="dateOfRequest" value="04/27/2026" readonly />
+        </div>
+        <div class="field">
+          <label>Representative</label>
+          <input type="text" id="representative" value="Cindy" />
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="text" id="agentPhone" value="+1-604-421-0101" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="agentEmail" value="cindy@bluebirdtravel.com" />
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Travel Info -->
+      <div class="field-group-title">Travel Information</div>
+      <div class="row">
+        <div class="field">
+          <label>Tour Package</label>
+          <select id="tourPackage" onchange="clearError(this);renderCustomerRows()">
+            <option value="">Select Tour Package</option>
+            <option value="Rockies 3N" selected>Rockies 3N</option>
+          </select>
+          <div class="field-error" id="err-tourPackage">*Tour package is required.</div>
+        </div>
+        <div class="field">
+          <label>Departure Date</label>
+          <input type="date" id="departureDate" value="2026-05-01" onchange="clearError(this)" />
+          <div class="field-error" id="err-departureDate">*Departure date is required.</div>
+        </div>
+        <div class="field">
+          <label>End Date</label>
+          <input type="date" id="endDate" value="2026-05-04" onchange="clearError(this)" />
+          <div class="field-error" id="err-endDate">*End date is required.</div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Customer Info -->
+      <div class="section-header-row">
+        <div class="field-group-title" style="margin-bottom:0">Customer Information</div>
+        <button class="add-btn" onclick="addCustomerRow()">+ Add Customer</button>
+      </div>
+      <div class="customer-table" id="customerTable">
+        <div class="customer-header customer-cols">
+          <span>Name</span>
+          <span>Phone Number</span>
+          <span>Gender</span>
+          <span>Occupancy</span>
+          <span>Price</span>
+          <span>Meeting Place</span>
+          <span>Sending Place</span>
+          <span>Actions</span>
+        </div>
+        <div id="customerRows">
+          <!-- rows injected by JS -->
+        </div>
+      </div>
+
+      <hr class="divider" style="margin-top:16px" />
+
+      <!-- Flight Info -->
+      <div class="section-header-row">
+        <div class="field-group-title" style="margin-bottom:0">Flight Information</div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <label class="checkbox-row">
+            <input type="checkbox" id="flightLater" onchange="toggleFlightLater()" />
+            <span style="font-weight:500;font-size:14px;color:#0a0a0a;cursor:pointer">Flight Later</span>
+          </label>
+          <button class="add-btn" onclick="addFlightRow()" id="addFlightBtn">+ Add Flight</button>
+        </div>
+      </div>
+      <div class="field-error" id="flightSectionErr" style="margin-bottom:8px">*At least one flight must be added, or check "Flight Later".</div>
+      <div id="flightRows">
+        <!-- injected by JS -->
+      </div>
+
+      <div class="field" style="margin-top:12px">
+        <label>Additional Notes</label>
+        <textarea id="addlNotes" placeholder="For cases like customers extending their return date or arriving in Vancouver a day early."></textarea>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-prev" disabled>&#8592; Previous</button>
+      <button class="btn-next" onclick="goToStep(2)">Next &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ════════════ STEP 2 ════════════ -->
+  <div class="step-panel" id="panel2">
+    <div class="card">
+      <div class="section-title">Options</div>
+      <div class="section-sub">Please select from the options below.</div>
+      <hr class="divider" />
+
+      <!-- Optional Tours -->
+      <div class="field-group-title">Optional Tours</div>
+      <div class="review-notes" style="margin-bottom:16px">
+        *Optional tours require advance reservation and seats must be secured at least 7 days before departure.<br>
+        *Please note that the snow vehicle optional tour operates only during the summer season.
+      </div>
+
+      <!-- Gondola -->
+      <div class="option-box" id="gondolaBox">
+        <label class="checkbox-label">
+          <input type="checkbox" id="gondolaCheck" onchange="toggleOption('gondola')" checked />
+          <div>
+            <div class="option-title">Gondola Ride + Lunch Buffet</div>
+          </div>
+        </label>
+        <div class="option-details" id="gondolaDetails">
+          <div class="option-qty-row">
+            <div class="option-qty-field">
+              <label>Adult (130 CAD)</label>
+              <select id="gondolaAdult" onchange="updateGondolaCost()">
+                <option>0</option><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              </select>
+            </div>
+            <div class="option-qty-field">
+              <label>Child (90 CAD)</label>
+              <select id="gondolaChild" onchange="updateGondolaCost()">
+                <option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="payment-section">
+              <label class="group-label">Payment Method</label>
+              <div class="radio-option">
+                <label class="radio-label">
+                  <input type="radio" name="gondolaPay" value="Pay Cash at Destination" checked />
+                  <span>Pay Cash at Destination</span>
+                </label>
+                <div class="radio-note">*Currency exchange assistance is available on site.</div>
+              </div>
+              <div class="radio-option">
+                <label class="radio-label">
+                  <input type="radio" name="gondolaPay" value="Included in Invoice" />
+                  <span>Included in Invoice</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Snow Coach -->
+      <div class="option-box" id="snowBox">
+        <label class="checkbox-label">
+          <input type="checkbox" id="snowCheck" onchange="toggleOption('snow')" />
+          <div>
+            <div class="option-title">Columbia Icefield Glacier Adventure Tour (Snow Coach)</div>
+          </div>
+        </label>
+        <div class="option-details" id="snowDetails" style="display:none">
+          <div class="option-qty-row">
+            <div class="option-qty-field">
+              <label>Adult (90 CAD)</label>
+              <select id="snowAdult" onchange="updateSnowCost()">
+                <option>0</option><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              </select>
+            </div>
+            <div class="option-qty-field">
+              <label>Child (50 CAD)</label>
+              <select id="snowChild" onchange="updateSnowCost()">
+                <option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="payment-section">
+              <label class="group-label">Payment Method</label>
+              <div class="radio-option">
+                <label class="radio-label">
+                  <input type="radio" name="snowPay" value="Pay Cash at Destination" checked />
+                  <span>Pay Cash at Destination</span>
+                </label>
+              </div>
+              <div class="radio-option">
+                <label class="radio-label">
+                  <input type="radio" name="snowPay" value="Included in Invoice" />
+                  <span>Included in Invoice</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider" style="margin-top:20px" />
+
+      <!-- Meal Plan -->
+      <div class="field-group-title">Meal Plan (Optional)</div>
+      <div class="review-notes" style="margin-bottom:16px">
+        *Meal plans can be reserved in advance or purchased locally.<br>
+        *If undecided, you can update later in "Manage Bookings."<br>
+        *Meal plan prices are the same for adults and children.
+      </div>
+
+      <div class="meal-option-box">
+        <label class="radio-box-label">
+          <input type="radio" name="mealPlan" value="yes" checked onchange="toggleMealPlan()" />
+          <span class="box-title">Yes, add the plan</span>
+        </label>
+        <div class="meal-details" id="mealDetails">
+          <div class="option-qty-row">
+            <div class="option-qty-field">
+              <label>Number of People</label>
+              <select id="mealPeople" onchange="updateMealCost()">
+                <option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+              </select>
+            </div>
+            <div class="option-qty-field">
+              <label>Meal Plan Price</label>
+              <input type="text" value="104 CAD" readonly id="mealPrice" />
+            </div>
+          </div>
+          <div class="payment-section">
+            <label class="group-label">Payment Method</label>
+            <div class="radio-option">
+              <label class="radio-label">
+                <input type="radio" name="mealPay" value="Pay Cash at Destination" checked />
+                <span>Pay Cash at Destination</span>
+              </label>
+              <div class="radio-note">*Currency exchange assistance is available on site.</div>
+            </div>
+            <div class="radio-option">
+              <label class="radio-label">
+                <input type="radio" name="mealPay" value="Included in Invoice" />
+                <span>Included in Invoice</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="meal-option-box">
+        <label class="radio-box-label">
+          <input type="radio" name="mealPlan" value="no" onchange="toggleMealPlan()" />
+          <span class="box-title">No, proceed without the plan</span>
+        </label>
+      </div>
+      <div class="meal-option-box">
+        <label class="radio-box-label">
+          <input type="radio" name="mealPlan" value="undecided" onchange="toggleMealPlan()" />
+          <span class="box-title">Undecided</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-prev" onclick="goToStep(1)">&#8592; Previous</button>
+      <button class="btn-next" onclick="goToStep(3)">Next &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ════════════ STEP 3 ════════════ -->
+  <div class="step-panel" id="panel3">
+    <div class="card">
+      <div class="section-title">Review and Confirmation</div>
+      <div class="section-sub">Submit the request after reviewing all information.</div>
+
+      <!-- Tour Package -->
+      <div class="review-block">
+        <div class="review-block-title">Tour Package Information</div>
+        <div class="review-inner">
+          <div class="review-row">
+            <div class="review-col"><span class="r-label">Tour Name</span><span class="r-val" id="rv-tourName">—</span></div>
+            <div class="review-col"><span class="r-label">Tour Period</span><span class="r-val" id="rv-tourPeriod">—</span></div>
+            <div class="review-col"><span class="r-label">Net Price</span><span class="r-val" id="rv-netPrice">—</span></div>
+          </div>
+        </div>
+        <div class="review-notes">
+          *For the Rockies 3N itinerary, providing flight information is not mandatory.<br>
+          *Net price excludes GST; the invoice will show the amount including tax.
+        </div>
+      </div>
+
+      <!-- Customers -->
+      <div class="review-block">
+        <div class="review-block-title" id="rv-custTitle">Customer Information</div>
+        <div id="rv-customers"></div>
+        <div class="review-notes">*Flight information is optional for this itinerary.</div>
+      </div>
+
+      <!-- Optional Tours -->
+      <div class="review-block" id="rv-optBlock">
+        <div class="review-block-title">Optional Tours</div>
+        <div id="rv-optContent"></div>
+        <div class="review-notes">
+          *Displayed amounts include tax.<br>
+          *Optional tour details can be changed up to 7 days before departure.
+        </div>
+      </div>
+
+      <!-- Meal Plan -->
+      <div class="review-block" id="rv-mealBlock">
+        <div class="review-block-title">Meal Plan</div>
+        <div id="rv-mealContent"></div>
+        <div class="review-notes">
+          *Displayed amounts include tax.<br>
+          *Meal plan prices are the same for adults and children.
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-box">
+        <div class="summary-title">Summary</div>
+        <div class="review-row" id="rv-summary1"></div>
+        <div class="review-row" id="rv-summary2" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-prev" onclick="goToStep(2)">&#8592; Previous</button>
+      <button class="btn-submit" onclick="submitForm()">Submit Request</button>
+    </div>
+  </div>
+
+</div><!-- /content -->
+</main>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <img src="https://www.figma.com/api/mcp/asset/bdbd4277-91f4-42f8-8f6c-fcddf8a5f9d6" alt="Royal Tours logo" style="height:36px;border-radius:4px;" />
+      <div class="login-brand">Royal Tours</div>
+      <div class="login-sub">Partner Portal</div>
+    </div>
+    <div class="login-divider"></div>
+    <div class="login-welcome">Welcome back</div>
+    <div class="login-hint">Sign in to your partner account to continue.</div>
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" value="cindy@bluebirdtravel.com" />
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" value="Bluebird2026!" />
+    </div>
+    <span class="login-forgot">Forgot password?</span>
+    <button class="login-btn" onclick="doLogin()">Login</button>
+    <p style="margin-top:20px;font-size:12.5px;color:#826a6a;">Don't have an account? <a href="#" style="color:#140303;font-weight:500;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Make an account</a></p>
+  </div>
+</div>
+
+<div id="preSubmitOverlay">
+  <div class="confirm-modal">
+    <div class="confirm-title">Submit Booking Request?</div>
+    <div class="confirm-sub">Please confirm that all information is correct before submitting. This will send your booking request to a coordinator for review.</div>
+    <div class="confirm-actions">
+      <button class="btn-dashboard" onclick="confirmSubmit()">Yes, Submit</button>
+      <button class="btn-contact" onclick="document.getElementById('preSubmitOverlay').classList.remove('show')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirmOverlay">
+  <div class="confirm-modal">
+    <div class="confirm-check">
+      <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="13" cy="13" r="13" fill="#22c55e" opacity="0.15"/>
+        <circle cx="13" cy="13" r="10" fill="#22c55e"/>
+        <path d="M8.5 13.5l3 3 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="confirm-title">Booking Request Submitted!</div>
+    <div class="confirm-sub">Booking request submitted successfully! A coordinator will review your request shortly.</div>
+    <div class="confirm-actions">
+      <button class="btn-dashboard" onclick="returnToDashboard()">Return to Dashboard</button>
+      <button class="btn-contact" disabled>Contact Rep</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ───────────────────────────────────────────
+// Login
+// ───────────────────────────────────────────
+function doLogin() {
+  document.getElementById('loginScreen').classList.add('hidden');
+}
+function doLogout() {
+  document.getElementById('loginScreen').classList.remove('hidden');
+  goToStep(1);
+}
+
+// ───────────────────────────────────────────
+// State
+// ───────────────────────────────────────────
+let currentStep = 1;
+
+let customers = [
+  { name: '', phone: '', gender: 'Male', occupancy: '2 Persons', meetPlace: '', sendPlace: '' }
+];
+
+let flights = [
+  { num: '', date: '', dep: '', arr: '', depTime: '', arrTime: '' }
+];
+
+let flightLater = false;
+
+const TOUR_PRICES = { 'Rockies 3N': 639, 'Rockies 5N': 989, 'Vancouver 2N': 449 };
+
+// ───────────────────────────────────────────
+// Validation helpers
+// ───────────────────────────────────────────
+function markInvalid(el, errId, msg) {
+  el.classList.add('invalid');
+  const errEl = document.getElementById(errId);
+  if (errEl) { if (msg) errEl.textContent = msg; errEl.classList.add('show'); }
+}
+function markValid(el, errId) {
+  el.classList.remove('invalid');
+  const errEl = document.getElementById(errId);
+  if (errEl) errEl.classList.remove('show');
+}
+function clearError(el) {
+  el.classList.remove('invalid');
+  // find sibling .field-error
+  const err = el.parentElement.querySelector('.field-error');
+  if (err) err.classList.remove('show');
+}
+
+function validateStep1() {
+  let ok = true;
+
+  // Travel Information
+  const pkg = document.getElementById('tourPackage');
+  const dep = document.getElementById('departureDate');
+  const end = document.getElementById('endDate');
+  if (!pkg.value) { markInvalid(pkg, 'err-tourPackage'); ok = false; } else { markValid(pkg, 'err-tourPackage'); }
+  if (!dep.value) { markInvalid(dep, 'err-departureDate'); ok = false; } else { markValid(dep, 'err-departureDate'); }
+  if (!end.value) { markInvalid(end, 'err-endDate'); ok = false; } else { markValid(end, 'err-endDate'); }
+
+  // Customer Information — name, phone, meetPlace, sendPlace required per row
+  customers.forEach((c, i) => {
+    const row = document.getElementById('customerRows').children[i];
+    if (!row) return;
+    const textInputs = Array.from(row.querySelectorAll('input[type=text]:not([readonly])'));
+    const fields = [
+      { el: textInputs[0],                              key: 'name',      msg: '*Name is required.' },
+      { el: textInputs[1],                              key: 'phone',     msg: '*Phone number is required.' },
+      { el: document.getElementById(`meet-c${i}`),     key: 'meetPlace', msg: '*Meeting place is required.' },
+      { el: document.getElementById(`send-c${i}`),     key: 'sendPlace', msg: '*Sending place is required.' },
+    ];
+    fields.forEach(f => {
+      if (!f.el) return;
+      const errId = `err-c${i}-${f.key}`;
+      if (!c[f.key] || !c[f.key].trim()) { markInvalid(f.el, errId, f.msg); ok = false; }
+      else { markValid(f.el, errId); }
+    });
+  });
+
+  // Occupancy validation — each customer's occupancy number must not exceed total customers
+  customers.forEach((c, i) => {
+    const sel = document.getElementById(`occ-c${i}`);
+    if (!sel) return;
+    const num = parseInt(c.occupancy) || 1;
+    const errId = `err-c${i}-occupancy`;
+    if (num > customers.length) { markInvalid(sel, errId, '*Not enough customers for this occupancy.'); ok = false; }
+    else { markValid(sel, errId); }
+  });
+
+  // Flight Information — skip if flightLater
+  if (!flightLater) {
+    if (flights.length === 0) {
+      // no flights and not "later" — show section-level error
+      const hint = document.getElementById('flightSectionErr');
+      if (hint) hint.classList.add('show');
+      ok = false;
+    } else {
+      const hint = document.getElementById('flightSectionErr');
+      if (hint) hint.classList.remove('show');
+      flights.forEach((f, i) => {
+        const flightRow = document.getElementById('flightRows').children[i];
+        if (!flightRow) return;
+        const allInputs = flightRow.querySelectorAll('input');
+        // order: flight-num(text), date, dep(text), arr(text), depTime, arrTime
+        const flightFields = [
+          { el: allInputs[0], key: 'num',     msg: '*Flight number is required.' },
+          { el: allInputs[1], key: 'date',    msg: '*Date is required.' },
+          { el: allInputs[2], key: 'dep',     msg: '*Departure airport is required.' },
+          { el: allInputs[3], key: 'arr',     msg: '*Arrival airport is required.' },
+          { el: allInputs[4], key: 'depTime', msg: '*Departure time is required.' },
+          { el: allInputs[5], key: 'arrTime', msg: '*Arrival time is required.' },
+        ];
+        flightFields.forEach(ff => {
+          if (!ff.el) return;
+          const errId = `err-f${i}-${ff.key}`;
+          if (!f[ff.key] || !String(f[ff.key]).trim()) { markInvalid(ff.el, errId, ff.msg); ok = false; }
+          else { markValid(ff.el, errId); }
+        });
+      });
+    }
+  } else {
+    const hint = document.getElementById('flightSectionErr');
+    if (hint) hint.classList.remove('show');
+  }
+
+  if (!ok) {
+    // scroll to first error
+    const firstErr = document.querySelector('#panel1 .invalid, #panel1 .field-error.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return ok;
+}
+
+// ───────────────────────────────────────────
+// Step navigation
+// ───────────────────────────────────────────
+function goToStep(n) {
+  // validate before leaving step 1
+  if (currentStep === 1 && n === 2) {
+    if (!validateStep1()) return;
+    syncParticipantDropdowns();
+  }
+  document.getElementById('panel' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('panel' + currentStep).classList.add('active');
+  updateStepIndicator();
+  if (n === 3) populateReview();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateStepIndicator() {
+  for (let i = 1; i <= 3; i++) {
+    const num  = document.getElementById('stepNum'  + i);
+    const lbl  = document.getElementById('stepLbl'  + i);
+    const line = document.getElementById('stepLine' + i);
+    const sub  = document.getElementById('stepSub'  + i);
+
+    const isDone   = i < currentStep;
+    const isActive = i === currentStep;
+
+    num .className = 'step-num'   + (isDone || isActive ? ' active' : '');
+    lbl .className = 'step-label' + (isDone || isActive ? ' active' : '');
+    line.className = 'step-line'  + (isDone || isActive ? ' active' : '');
+
+    if (sub) {
+      sub.querySelectorAll('span').forEach(s => {
+        s.className = isDone || isActive ? 'active done' : '';
+      });
+    }
+  }
+}
+
+// ───────────────────────────────────────────
+// Customer rows
+// ───────────────────────────────────────────
+function renderCustomerRows() {
+  const container = document.getElementById('customerRows');
+  container.innerHTML = '';
+  customers.forEach((c, i) => {
+    const row = document.createElement('div');
+    row.className = 'customer-row';
+    row.innerHTML = `
+      <div class="customer-cols">
+        <div class="field">
+          <input type="text" value="${c.name}" placeholder="Name" oninput="customers[${i}].name=this.value;clearError(this)" />
+          <div class="field-error" id="err-c${i}-name">*Name is required.</div>
+        </div>
+        <div class="field">
+          <input type="text" value="${c.phone}" placeholder="Phone" oninput="customers[${i}].phone=this.value;clearError(this)" />
+          <div class="field-error" id="err-c${i}-phone">*Phone number is required.</div>
+        </div>
+        <div class="field">
+          <select onchange="customers[${i}].gender=this.value">
+            <option ${c.gender==='Male'?'selected':''}>Male</option>
+            <option ${c.gender==='Female'?'selected':''}>Female</option>
+            <option ${c.gender==='Other'?'selected':''}>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <select id="occ-c${i}" onchange="customers[${i}].occupancy=this.value;clearError(this)">
+            <option ${c.occupancy==='1 Person'?'selected':''}>1 Person</option>
+            <option ${c.occupancy==='2 Persons'?'selected':''}>2 Persons</option>
+            <option ${c.occupancy==='3 Persons'?'selected':''}>3 Persons</option>
+            <option ${c.occupancy==='4 Persons'?'selected':''}>4 Persons</option>
+          </select>
+          <div class="field-error" id="err-c${i}-occupancy">*Not enough customers for this occupancy.</div>
+        </div>
+        <div class="field">
+          <input type="text" id="price-c${i}" value="${getPriceLabel()}" readonly />
+        </div>
+        <div class="field">
+          <select id="meet-c${i}" onchange="onMeetChange(${i},this)">
+            <option value="">Select</option>
+            <option value="Canada Place" ${c.meetPlace==='Canada Place'?'selected':''}>Canada Place</option>
+            <option value="Burnaby Lougheed" ${c.meetPlace==='Burnaby Lougheed'?'selected':''}>Burnaby Lougheed</option>
+            <option value="Surrey Sheraton" ${c.meetPlace==='Surrey Sheraton'?'selected':''}>Surrey Sheraton</option>
+          </select>
+          <div class="field-error" id="err-c${i}-meetPlace">*Meeting place is required.</div>
+        </div>
+        <div class="field">
+          <input type="text" id="send-c${i}" value="${c.sendPlace}" placeholder="Sending place" oninput="customers[${i}].sendPlace=this.value;clearError(this)" />
+          <div class="field-error" id="err-c${i}-sendPlace">*Sending place is required.</div>
+        </div>
+        <div class="customer-actions-cell">
+          <button class="icon-btn" title="Reset row" onclick="resetCustomer(${i})" style="font-size:15px">↺</button>
+          <button class="icon-btn danger" title="Delete" onclick="removeCustomer(${i})">🗑</button>
+        </div>
+      </div>`;
+    container.appendChild(row);
+  });
+}
+
+function onMeetChange(i, sel) {
+  customers[i].meetPlace = sel.value;
+  clearError(sel);
+  // auto-copy to sending place if not manually edited
+  const sendEl = document.getElementById('send-c' + i);
+  if (sendEl) {
+    customers[i].sendPlace = sel.value;
+    sendEl.value = sel.value;
+    clearError(sendEl);
+  }
+}
+
+function getPriceLabel() {
+  const pkg = document.getElementById('tourPackage')?.value;
+  return TOUR_PRICES[pkg] ? TOUR_PRICES[pkg] + ' CAD' : 'Auto Calculated';
+}
+
+function addCustomerRow() {
+  customers.push({ name: '', phone: '', gender: 'Male', occupancy: '2 Persons', meetPlace: '', sendPlace: '' });
+  renderCustomerRows();
+}
+function removeCustomer(i) {
+  if (customers.length > 1) { customers.splice(i, 1); renderCustomerRows(); }
+}
+function resetCustomer(i) {
+  customers[i] = { name: '', phone: '', gender: 'Male', occupancy: '2 Persons', meetPlace: '', sendPlace: '' };
+  renderCustomerRows();
+}
+
+// ───────────────────────────────────────────
+// Flight rows
+// ───────────────────────────────────────────
+function renderFlightRows() {
+  const container = document.getElementById('flightRows');
+  container.innerHTML = '';
+  if (flightLater) {
+    container.innerHTML = '<p style="font-size:13px;color:#826a6a;padding:8px 0">Flight details will be provided later.</p>';
+    return;
+  }
+  if (flights.length === 0) return;
+  flights.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.className = 'flight-row';
+    row.innerHTML = `
+      <div class="field flight-num-col">
+        <label style="font-size:12px;visibility:hidden">—</label>
+        <div class="flight-num-cell">${i + 1}</div>
+      </div>
+      <div class="field" style="flex:1">
+        <label style="font-size:14px;font-weight:500">Flight Number</label>
+        <input type="text" value="${f.num}" placeholder="e.g., KE071" oninput="flights[${i}].num=this.value;clearError(this)" />
+        <div class="field-error" id="err-f${i}-num">*Flight number is required.</div>
+      </div>
+      <div class="field" style="flex:1">
+        <label style="font-size:14px;font-weight:500">Date</label>
+        <input type="date" value="${f.date}" oninput="flights[${i}].date=this.value;clearError(this)" onchange="flights[${i}].date=this.value;clearError(this)" />
+        <div class="field-error" id="err-f${i}-date">*Date is required.</div>
+      </div>
+      <div class="field" style="flex:1">
+        <label style="font-size:14px;font-weight:500">Departure</label>
+        <input type="text" value="${f.dep}" placeholder="YVR" oninput="flights[${i}].dep=this.value;clearError(this)" />
+        <div class="field-error" id="err-f${i}-dep">*Departure airport is required.</div>
+      </div>
+      <div class="field" style="flex:1">
+        <label style="font-size:14px;font-weight:500">Arrival</label>
+        <input type="text" value="${f.arr}" placeholder="ICN" oninput="flights[${i}].arr=this.value;clearError(this)" />
+        <div class="field-error" id="err-f${i}-arr">*Arrival airport is required.</div>
+      </div>
+      <div class="field" style="flex:1">
+        <label style="font-size:14px;font-weight:500">Departure Time</label>
+        <input type="time" value="${f.depTime}" oninput="flights[${i}].depTime=this.value;clearError(this)" onchange="flights[${i}].depTime=this.value;clearError(this)" />
+        <div class="field-error" id="err-f${i}-depTime">*Departure time is required.</div>
+      </div>
+      <div class="field" style="flex:1">
+        <label style="font-size:14px;font-weight:500">Arrival Time</label>
+        <input type="time" value="${f.arrTime}" oninput="flights[${i}].arrTime=this.value;clearError(this)" onchange="flights[${i}].arrTime=this.value;clearError(this)" />
+        <div class="field-error" id="err-f${i}-arrTime">*Arrival time is required.</div>
+      </div>
+      <div class="flight-actions-col">
+        <label style="font-weight:500;font-size:12px">Actions</label>
+        <button class="icon-btn danger" title="Remove" onclick="removeFlight(${i})" style="height:44px;width:44px">🗑</button>
+      </div>`;
+    container.appendChild(row);
+  });
+}
+
+function addFlightRow() {
+  flights.push({ num: '', date: '', dep: '', arr: '', depTime: '', arrTime: '' });
+  renderFlightRows();
+}
+function removeFlight(i) {
+  flights.splice(i, 1);
+  renderFlightRows();
+}
+function toggleFlightLater() {
+  flightLater = document.getElementById('flightLater').checked;
+  const addBtn = document.getElementById('addFlightBtn');
+  addBtn.disabled = flightLater;
+  addBtn.style.opacity = flightLater ? '0.4' : '1';
+  addBtn.style.cursor = flightLater ? 'default' : 'pointer';
+  // clear any flight errors when toggling later
+  if (flightLater) {
+    document.getElementById('flightSectionErr').classList.remove('show');
+    document.querySelectorAll('[id^="err-f"]').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('#flightRows input.invalid').forEach(e => e.classList.remove('invalid'));
+  }
+  renderFlightRows();
+}
+
+// ───────────────────────────────────────────
+// Options helpers
+// ───────────────────────────────────────────
+function toggleOption(which) {
+  const checked = document.getElementById(which + 'Check').checked;
+  const details = document.getElementById(which + 'Details');
+  details.style.display = checked ? 'flex' : 'none';
+}
+
+function toggleMealPlan() {
+  const val = document.querySelector('input[name="mealPlan"]:checked').value;
+  document.getElementById('mealDetails').style.display = (val === 'yes') ? 'flex' : 'none';
+}
+
+function updateGondolaCost() {}
+function updateSnowCost() {}
+function updateMealCost() {}
+
+function syncParticipantDropdowns() {
+  const max = customers.length;
+  const dropdowns = ['gondolaAdult', 'gondolaChild', 'snowAdult', 'snowChild', 'mealPeople'];
+  dropdowns.forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const current = parseInt(sel.value) || 0;
+    sel.innerHTML = '';
+    for (let n = 0; n <= max; n++) {
+      const opt = document.createElement('option');
+      opt.value = n;
+      opt.textContent = n;
+      if (n === Math.min(current, max)) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+// ───────────────────────────────────────────
+// Review population
+// ───────────────────────────────────────────
+function populateReview() {
+  const pkg   = document.getElementById('tourPackage').value || '—';
+  const dep   = document.getElementById('departureDate').value;
+  const end   = document.getElementById('endDate').value;
+  const price = TOUR_PRICES[pkg] ? TOUR_PRICES[pkg] + ' CAD' : '—';
+
+  document.getElementById('rv-tourName').textContent   = pkg;
+  document.getElementById('rv-tourPeriod').textContent = dep && end ? fmtDate(dep) + ' – ' + fmtDate(end) : '—';
+  document.getElementById('rv-netPrice').textContent   = price;
+
+  // Customers
+  document.getElementById('rv-custTitle').textContent = `Customer Information (${customers.length} persons)`;
+  const custHtml = customers.map((c, i) => `
+    <div class="review-inner">
+      <div style="font-weight:600;font-size:14px;margin-bottom:12px">Customer ${i+1}</div>
+      <div class="review-row">
+        <div class="review-col"><span class="r-label">Name</span><span class="r-val">${c.name || '—'}</span></div>
+        <div class="review-col"><span class="r-label">Gender</span><span class="r-val">${c.gender}</span></div>
+        <div class="review-col"><span class="r-label">Contact Number</span><span class="r-val">${c.phone || '—'}</span></div>
+      </div>
+      <div class="review-row" style="margin-top:12px">
+        <div class="review-col"><span class="r-label">Occupancy</span><span class="r-val">${c.occupancy}</span></div>
+        <div class="review-col"><span class="r-label">Pickup Location</span><span class="r-val">${c.meetPlace || '—'}</span></div>
+        <div class="review-col"><span class="r-label">Drop-off Location</span><span class="r-val">${c.sendPlace || '—'}</span></div>
+      </div>
+      <div class="review-row" style="margin-top:12px">
+        <div class="review-col"><span class="r-label">Flight Information</span><span class="r-val">${flightLater ? 'TBD' : (flights.length ? flights[0].num || '—' : 'None')}</span></div>
+      </div>
+    </div>`).join('');
+  document.getElementById('rv-customers').innerHTML = custHtml;
+
+  // Optional Tours
+  let optHtml = '';
+  const gondola = document.getElementById('gondolaCheck').checked;
+  const snow    = document.getElementById('snowCheck').checked;
+  const gondolaPay = document.querySelector('input[name="gondolaPay"]:checked')?.value || '—';
+  const snowPay    = document.querySelector('input[name="snowPay"]:checked')?.value || '—';
+  const gA = parseInt(document.getElementById('gondolaAdult').value) || 0;
+  const gC = parseInt(document.getElementById('gondolaChild').value) || 0;
+  const sA = parseInt(document.getElementById('snowAdult')?.value) || 0;
+  const sC = parseInt(document.getElementById('snowChild')?.value) || 0;
+
+  if (gondola) {
+    optHtml += `<div class="review-inner">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">Gondola Ride + Lunch Buffet</div>
+      <div class="review-row">
+        <div class="review-col"><span class="r-label">Adult (130 CAD)</span><span class="r-val">${gA} persons</span></div>
+        <div class="review-col"><span class="r-label">Child (90 CAD)</span><span class="r-val">${gC} persons</span></div>
+        <div class="review-col"><span class="r-label">Total Estimated Cost</span><span class="r-val">${gA*130+gC*90} CAD</span></div>
+      </div>
+      <div class="review-row" style="margin-top:12px">
+        <div class="review-col"><span class="r-label">Payment Method</span><span class="r-val">${gondolaPay}</span></div>
+      </div>
+    </div>`;
+  }
+  if (snow) {
+    optHtml += `<div class="review-inner" style="margin-top:12px">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">Icefield Tour (Snow Coach)</div>
+      <div class="review-row">
+        <div class="review-col"><span class="r-label">Adult (90 CAD)</span><span class="r-val">${sA} persons</span></div>
+        <div class="review-col"><span class="r-label">Child (50 CAD)</span><span class="r-val">${sC} persons</span></div>
+        <div class="review-col"><span class="r-label">Total Estimated Cost</span><span class="r-val">${sA*90+sC*50} CAD</span></div>
+      </div>
+      <div class="review-row" style="margin-top:12px">
+        <div class="review-col"><span class="r-label">Payment Method</span><span class="r-val">${snowPay}</span></div>
+      </div>
+    </div>`;
+  }
+  if (!gondola && !snow) optHtml = '<p style="font-size:13px;color:#826a6a">No optional tours selected.</p>';
+  document.getElementById('rv-optContent').innerHTML = optHtml;
+
+  // Meal Plan
+  const mealVal = document.querySelector('input[name="mealPlan"]:checked')?.value || 'undecided';
+  const mealPay = document.querySelector('input[name="mealPay"]:checked')?.value || '—';
+  const mealPeople = parseInt(document.getElementById('mealPeople').value) || 1;
+  let mealHtml = '';
+  if (mealVal === 'yes') {
+    mealHtml = `<div class="review-inner">
+      <div class="review-row">
+        <div class="review-col"><span class="r-label">Number of People</span><span class="r-val">${mealPeople} persons</span></div>
+        <div class="review-col"><span class="r-label">Unit Price</span><span class="r-val">104 CAD</span></div>
+        <div class="review-col"><span class="r-label">Total Estimated Cost</span><span class="r-val">${mealPeople*104} CAD</span></div>
+      </div>
+      <div class="review-row" style="margin-top:12px">
+        <div class="review-col"><span class="r-label">Payment Method</span><span class="r-val">${mealPay}</span></div>
+      </div>
+    </div>`;
+  } else {
+    mealHtml = `<p style="font-size:13px;color:#826a6a">${mealVal === 'no' ? 'No meal plan.' : 'Undecided – can be updated later in Manage Bookings.'}</p>`;
+  }
+  document.getElementById('rv-mealContent').innerHTML = mealHtml;
+
+  // Summary
+  const tourPrice = TOUR_PRICES[pkg] || 0;
+  document.getElementById('rv-summary1').innerHTML = `
+    <div class="review-col"><span class="r-label">Tour Name</span><span class="r-val">${pkg}</span></div>
+    <div class="review-col"><span class="r-label">Total Number of Customers</span><span class="r-val">${customers.length} persons</span></div>
+    <div class="review-col"><span class="r-label">Net Price</span><span class="r-val">${tourPrice ? tourPrice + ' CAD' : '—'}</span></div>`;
+
+  document.getElementById('rv-summary2').innerHTML = `
+    <div class="review-col"><span class="r-label">Gondola Tour Participants</span><span class="r-val">${gondola ? gA + ' adults, ' + gC + ' children ('+gondolaPay+')' : 'N/A'}</span></div>
+    <div class="review-col"><span class="r-label">Snowcoach Tour Participants</span><span class="r-val">${snow ? sA + ' adults, ' + sC + ' children ('+snowPay+')' : 'N/A'}</span></div>
+    <div class="review-col"><span class="r-label">Meal Plan</span><span class="r-val">${mealVal==='yes' ? mealPeople+' persons ('+mealPay+')' : (mealVal==='undecided' ? 'Undecided' : 'None')}</span></div>`;
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = iso.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m)-1] + ' ' + parseInt(d);
+}
+
+// ───────────────────────────────────────────
+// Submit
+// ───────────────────────────────────────────
+function submitForm() {
+  document.getElementById('preSubmitOverlay').classList.add('show');
+}
+function confirmSubmit() {
+  document.getElementById('preSubmitOverlay').classList.remove('show');
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function returnToDashboard() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  goToStep(1);
+}
+
+function contactRep() {
+  window.location.href = 'mailto:coordinator@royaltours.com';
+}
+
+// ───────────────────────────────────────────
+// Init
+// ───────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderCustomerRows();
+  renderFlightRows();
+  updateStepIndicator();
+
+  // set today as date of request
+  const today = new Date();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  const yyyy = today.getFullYear();
+  document.getElementById('dateOfRequest').value = mm + '/' + dd + '/' + yyyy;
+});
+</script>
+</body>
+</html>
