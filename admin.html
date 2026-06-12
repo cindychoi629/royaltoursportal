@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Royal Tours – Admin Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #fbf9f9; min-height: 100vh; display: flex; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 224px; height: 100vh; background: #fff;
+    border-right: 1px solid #ebe5e5; display: flex; flex-direction: column; flex-shrink: 0;
+    position: sticky; top: 0;
+  }
+  .sidebar-logo {
+    padding: 21px; border-bottom: 1px solid #ebe5e5;
+    display: flex; flex-direction: column; align-items: center; gap: 8px; height: 132px;
+  }
+  .sidebar-logo img { height: 25px; border-radius: 4px; }
+  .sidebar-logo .company { font-weight: 700; font-size: 20px; color: #281010; letter-spacing: -0.36px; line-height: 28px; }
+  .sidebar-logo .portal  { font-size: 12.25px; color: #654a4a; letter-spacing: -0.02px; line-height: 17.5px; }
+
+  .sidebar-agent {
+    background: #fbf9f9; border-bottom: 1px solid #ebe5e5;
+    padding: 21px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .sidebar-agent .role-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .sidebar-agent .role-row img { width: 14px; height: 14px; }
+  .sidebar-agent .role { font-size: 12.25px; color: #826a6a; }
+  .sidebar-agent .name  { font-weight: 500; font-size: 14px; color: #281010; letter-spacing: -0.29px; }
+  .sidebar-agent .company-name { font-size: 12.25px; color: #654a4a; }
+  .sidebar-agent .email { font-size: 10.5px; color: #826a6a; letter-spacing: 0.09px; }
+
+  .sidebar-nav { flex: 1; padding: 21px; display: flex; flex-direction: column; gap: 7px; }
+  .nav-item {
+    height: 42px; border-radius: 6.75px; display: flex; align-items: center;
+    padding: 0 20px; gap: 16px; cursor: pointer; font-size: 12.25px; color: #533636;
+    transition: background 0.15s; flex-shrink: 0;
+  }
+  .nav-item:hover { background: #f5f3f3; }
+  .nav-item.active { background: #1c1c1c; color: #fff; }
+  .nav-item img { width: 14px; height: 14px; flex-shrink: 0; }
+
+  .sidebar-notifications {
+    border-top: 1px solid #ebe5e5; padding: 22px 21px;
+  }
+  .notif-row { display: flex; align-items: center; justify-content: space-between; }
+  .notif-label { font-weight: 500; font-size: 12.25px; color: #281010; }
+  .notif-btn {
+    width: 33.5px; height: 28px; border: 1px solid rgba(0,0,0,.1); background: #fff;
+    border-radius: 6.75px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
+  }
+  .notif-btn img { width: 14px; height: 14px; }
+  .notif-badge {
+    position: absolute; top: -7px; left: 21px;
+    background: #000; border: 1px solid rgba(0,0,0,0);
+    border-radius: 9999px; width: 17.5px; height: 17.5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 500; color: #fff; letter-spacing: 0.09px;
+  }
+
+  .sidebar-footer { border-top: 1px solid #ebe5e5; padding: 22px 21px; background: #fff; }
+  .logout-btn {
+    height: 42px; border-radius: 6.75px; border: 1px solid rgba(0,0,0,.1);
+    background: #fff; display: flex; align-items: center; padding: 0 10.5px; gap: 12px;
+    cursor: pointer; font-size: 12.25px; color: #533636; width: 100%; font-family: 'Inter', sans-serif;
+    transition: background 0.15s;
+  }
+  .logout-btn:hover { background: #f5f3f3; }
+  .logout-btn img { width: 14px; height: 14px; }
+
+  /* ── Main ── */
+  .main { flex: 1; overflow: auto; display: flex; flex-direction: column; }
+  .content { padding: 40px 20px; display: flex; flex-direction: column; gap: 21px; }
+
+  /* ── Page header ── */
+  .page-title { font-weight: 600; font-size: 20px; color: #281010; letter-spacing: -0.36px; line-height: 28px; }
+  .page-sub { font-size: 12.25px; color: #654a4a; letter-spacing: -0.02px; line-height: 17.5px; }
+
+  /* ── Stat cards ── */
+  .stat-cards { display: flex; gap: 20px; flex-wrap: nowrap; }
+  .stat-card {
+    background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 12.75px;
+    padding: 17px; display: flex; gap: 8px; align-items: flex-start; flex: 1; min-width: 0;
+  }
+  .stat-card .stat-content { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .stat-card .stat-label { font-size: 12.25px; color: #654a4a; line-height: 17.5px; letter-spacing: -0.02px; }
+  .stat-card .stat-value { font-weight: 600; font-size: 21px; line-height: 28px; letter-spacing: -0.36px; }
+  .stat-card .stat-value.default { color: #281010; }
+  .stat-card .stat-value.red     { color: #b60707; }
+  .stat-card .stat-value.yellow  { color: #d08700; }
+  .stat-card .stat-value.green   { color: #00a63e; }
+  .stat-card .stat-value.crimson { color: #e7000b; }
+  .stat-card img { width: 28px; height: 28px; flex-shrink: 0; }
+
+  /* ── Search & filter bar ── */
+  .filter-bar {
+    background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 12.75px;
+    padding: 16px 20px;
+  }
+  .filter-inner { display: flex; gap: 16px; align-items: center; }
+  .search-input {
+    flex: 1; background: #f5f3f3; border: 1px solid transparent; border-radius: 6.75px;
+    height: 38.5px; display: flex; align-items: center; gap: 16px; padding: 0 10.5px;
+    overflow: hidden;
+  }
+  .search-input img { width: 14px; height: 14px; flex-shrink: 0; }
+  .search-input input {
+    border: none; background: transparent; font-family: 'Inter', sans-serif;
+    font-size: 12.25px; color: #0a0a0a; outline: none; width: 100%;
+  }
+  .search-input input::placeholder { color: #827171; }
+  .filter-btn {
+    background: #f5f3f3; border: 1px solid transparent; border-radius: 6.75px;
+    height: 38.5px; width: 168px; display: flex; align-items: center; padding: 0 10.5px;
+    gap: 8px; cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+  .filter-btn img.filter-icon { width: 14px; height: 14px; flex-shrink: 0; }
+  .filter-btn .filter-text { flex: 1; font-size: 12.25px; color: #0a0a0a; text-align: center; line-height: 17.5px; }
+  .filter-btn img.chevron { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── Request cards list ── */
+  .requests-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .request-card {
+    background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 12.75px;
+    padding: 24px; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .request-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .request-card.highlighted {
+    border-left: 4px solid #181818;
+    border-top: 1px solid rgba(0,0,0,.1);
+    border-right: 1px solid rgba(0,0,0,.1);
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    box-shadow: 0 1px 1.5px rgba(0,0,0,.1), 0 1px 1px rgba(0,0,0,.1);
+    padding-left: 20px;
+  }
+
+  .card-header { display: flex; gap: 10.5px; align-items: center; margin-bottom: 16px; }
+  .card-req-id { font-weight: 600; font-size: 16px; color: #0a0a0a; letter-spacing: -0.29px; line-height: 24.5px; white-space: nowrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 8px; border-radius: 6.75px; flex-shrink: 0;
+  }
+  .badge img { width: 10.5px; height: 10.5px; }
+  .badge-pending { background: #fefce8; border: 1px solid #fff085; }
+  .badge-pending span { font-weight: 500; font-size: 10.5px; color: #a65f00; letter-spacing: 0.09px; white-space: nowrap; }
+  .badge-new { background: #ca2323; border: 1px solid #ca2323; padding: 5px 9px; }
+  .badge-new span { font-weight: 500; font-size: 10.5px; color: #fff; letter-spacing: 0.09px; white-space: nowrap; }
+  .badge-confirmed { background: #f0fef5; border: 1px solid #85ffb2; }
+  .badge-confirmed span { font-weight: 500; font-size: 10.5px; color: #00a63e; letter-spacing: 0.09px; white-space: nowrap; }
+  .badge-rejected { background: #fef0f1; border: 1px solid #ff6467; }
+  .badge-rejected span { font-weight: 500; font-size: 10.5px; color: #e7000b; letter-spacing: 0.09px; white-space: nowrap; }
+  .card-time { display: flex; align-items: center; gap: 7px; font-size: 12.25px; color: #826a6a; line-height: 17.5px; }
+  .card-time img { width: 10.5px; height: 10.5px; flex-shrink: 0; }
+
+  .card-body { display: flex; gap: 14px; }
+  .card-col { flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .card-col-label { font-size: 14px; color: #281010; }
+  .card-col-vals { display: flex; flex-direction: column; gap: 8px; }
+  .card-val { font-weight: 600; font-size: 14px; color: #181818; letter-spacing: -0.02px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-val-row { display: flex; align-items: center; gap: 8px; }
+  .card-val-row img { width: 12px; height: 12px; flex-shrink: 0; }
+
+  /* ── Modal overlay ── */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.55); z-index: 100;
+    align-items: center; justify-content: center;
+    padding: 32px;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 8.75px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1);
+    width: 680px;
+    min-width: 420px;
+    max-width: 95vw;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    resize: horizontal;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-inner {
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* ── Modal header ── */
+  .modal-header { display: flex; gap: 34px; align-items: flex-start; }
+  .modal-header-left { flex: 1; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .modal-title { font-weight: 600; font-size: 15.75px; color: #0a0a0a; letter-spacing: -0.29px; line-height: 15.75px; white-space: nowrap; }
+  .modal-close {
+    width: 14px; height: 14px; opacity: 0.7; cursor: pointer; flex-shrink: 0;
+    border: none; background: transparent; padding: 0; display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .modal-close img { width: 14px; height: 14px; }
+  .modal-close:hover { opacity: 1; }
+
+  /* ── Modal sections ── */
+  .modal-sections { display: flex; flex-direction: column; gap: 20px; }
+  .modal-divider { height: 1px; background: rgba(0,0,0,.1); }
+
+  .section-block {
+    background: #fcfbfb; border: 1px solid #ebe5e5; border-radius: 8.75px;
+    padding: 16px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .section-block-title-row { display: flex; align-items: center; gap: 8px; }
+  .section-dot { width: 7px; height: 7px; border-radius: 9999px; background: #826a6a; flex-shrink: 0; }
+  .section-block-title { font-weight: 600; font-size: 16px; color: #533636; letter-spacing: -0.15px; line-height: 22px; }
+
+  .section-inner {
+    background: #fff; border: 1px solid #ebe5e5; border-radius: 8.75px; padding: 16px;
+  }
+  .section-inner + .section-inner { margin-top: 8px; }
+
+  .info-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 16px; }
+  .info-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 16px; }
+  .info-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 16px; }
+  .info-grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px 16px; }
+
+  .info-field { display: flex; flex-direction: column; gap: 4px; }
+  .info-label { font-size: 14px; color: #654a4a; line-height: 19px; letter-spacing: -0.02px; }
+  .info-val { font-weight: 600; font-size: 14px; color: #281010; line-height: 19px; letter-spacing: -0.02px; }
+  .info-note { font-size: 10.5px; color: #826a6a; line-height: 14px; letter-spacing: 0.09px; }
+
+  /* flight # label */
+  .flight-number-label { font-weight: 600; font-size: 14px; color: #654a4a; line-height: 19px; }
+
+  /* rooms total */
+  .rooms-total {
+    background: #ffefef; border: 1px solid #ffbebe; border-radius: 8.75px;
+    padding: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .rooms-total-label { font-size: 14px; color: #533636; }
+  .rooms-total-val { font-weight: 600; font-size: 14px; color: #281010; letter-spacing: -0.15px; }
+
+  /* payment row */
+  .payment-row {
+    display: flex; align-items: center; gap: 12px;
+    border-top: 1px solid #f6f3f3; padding-top: 16px; margin-top: 4px;
+  }
+  .payment-row-label { font-size: 14px; color: #654a4a; white-space: nowrap; }
+  .payment-pill {
+    background: #f6f3f3; border: 1px solid #dcd1d1; border-radius: 9999px;
+    padding: 4px 12px; font-weight: 600; font-size: 14px; color: #533636; letter-spacing: -0.02px; white-space: nowrap;
+  }
+
+  /* ── Admin action area ── */
+  .admin-action {
+    background: #fcf8f8; border: 2px solid #e2caca; border-radius: 8.75px;
+    padding: 22.75px 23px 16px; display: flex; flex-direction: column; gap: 13.5px;
+  }
+  .admin-action-header { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .admin-action-pill {
+    background: #f0e2e2; border-radius: 9999px; padding: 4px 16px;
+    font-weight: 500; font-size: 14px; color: #6c4545; line-height: 19px; text-align: center; white-space: nowrap;
+  }
+  .admin-action-sub { font-size: 14px; color: #6c4545; line-height: 19px; text-align: center; letter-spacing: -0.02px; }
+  .admin-action-inner {
+    background: #fff; border: 1px solid #f0e2e2; border-radius: 8.75px;
+    padding: 15px;
+  }
+  .admin-notes-label { font-weight: 500; font-size: 14px; color: #533636; margin-bottom: 8px; line-height: 19px; }
+  .admin-notes-textarea {
+    width: 100%; height: 56px; background: #f5f3f3; border: 1px solid #e2caca;
+    border-radius: 6.75px; padding: 7px 10.5px; font-family: 'Inter', sans-serif;
+    font-size: 14px; color: #0a0a0a; resize: vertical; outline: none;
+    box-shadow: 0 0 0 0.5px rgba(161,161,161,.08);
+  }
+  .admin-notes-textarea::placeholder { color: #827171; }
+  .admin-action-btns {
+    display: flex; gap: 10px; justify-content: center; align-items: center;
+    border-top: 1px solid #f0e2e2; padding-top: 8px; margin-top: 8px; flex-wrap: wrap;
+  }
+  .action-btn {
+    display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+    border-radius: 6.75px; font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: 12.25px; line-height: 17.5px; cursor: pointer; letter-spacing: -0.02px; white-space: nowrap;
+    border: 1px solid transparent; transition: opacity 0.15s;
+  }
+  .action-btn:hover { opacity: 0.85; }
+  .action-btn img { width: 14px; height: 14px; flex-shrink: 0; }
+  .action-btn.invoice   { background: #000; color: #fff; border-color: #000; }
+  .action-btn.hold      { background: #fff; color: #8b8a8a; border-color: #8b8a8a; opacity: 0.4; cursor: not-allowed; }
+  .action-btn.hold:not(.enabled):hover { opacity: 0.4; }
+  .action-btn.hold.enabled { opacity: 1; cursor: pointer; }
+  .action-btn.hold.enabled:hover { opacity: 0.85; }
+  .action-btn.reject    { background: #e8101a; color: #fff; border-color: #e7000b; }
+
+  /* scrollbar style for modal */
+  .modal::-webkit-scrollbar { width: 6px; }
+  .modal::-webkit-scrollbar-track { background: transparent; }
+  .modal::-webkit-scrollbar-thumb { background: #dcd1d1; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://www.figma.com/api/mcp/asset/0422d2be-fba4-4d7c-9657-b401e78d4244" alt="Royal Tours logo" />
+    <div style="text-align:center">
+      <div class="company">Royal Tours</div>
+      <div class="portal">Partner Portal</div>
+    </div>
+  </div>
+
+  <div class="sidebar-agent">
+    <div class="role-row">
+      <img src="https://www.figma.com/api/mcp/asset/dfeccc82-d9ee-4b86-81cc-a340b6a59295" alt="" />
+      <span class="role">Coordinator</span>
+    </div>
+    <div class="name">Cindy Kim</div>
+    <div class="company-name">Royal Tours</div>
+    <div class="email">cindy@royaltours.com</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-item active">
+      <img src="https://www.figma.com/api/mcp/asset/fe3425c3-df29-44a0-9b48-6aac7bb1ee22" alt="" />
+      Booking Requests
+    </div>
+    <div class="nav-item">
+      <img src="https://www.figma.com/api/mcp/asset/879abc38-2736-4a37-a5d2-9a6b42cd125b" alt="" />
+      Manage Inquiries
+    </div>
+  </nav>
+
+  <div class="sidebar-notifications">
+    <div class="notif-row">
+      <span class="notif-label">Notifications</span>
+      <button class="notif-btn">
+        <img src="https://www.figma.com/api/mcp/asset/7d79d08b-ea6f-4998-befe-2644c1198dfe" alt="" />
+        <span class="notif-badge">2</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn">
+      <img src="https://www.figma.com/api/mcp/asset/cd7575a8-fe6d-4004-9048-28220beb7750" alt="" />
+      Log Out
+    </button>
+  </div>
+</aside>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main class="main">
+<div class="content">
+
+  <!-- Page header -->
+  <div>
+    <div class="page-title">Manage Booking Requests</div>
+    <div class="page-sub">Review and manage booking requests received from partners</div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label">All Requests</div>
+        <div class="stat-value default">2</div>
+      </div>
+      <img src="https://www.figma.com/api/mcp/asset/118abd59-ed7c-42f0-8152-c97ce0fc59d5" alt="" />
+    </div>
+    <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label" style="color:#b60707">New (Unconfirmed)</div>
+        <div class="stat-value red" id="newCount">1</div>
+      </div>
+      <img src="https://www.figma.com/api/mcp/asset/98802ba8-3b20-4d80-87b6-c697308dbd0d" alt="" />
+    </div>
+    <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label">Pend and Hold</div>
+        <div class="stat-value yellow" id="pendHoldCount">1</div>
+      </div>
+      <img src="https://www.figma.com/api/mcp/asset/d0e2271e-8da8-4364-a137-5460d90f8038" alt="" />
+    </div>
+    <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-value green" id="confirmedCount">0</div>
+      </div>
+      <img src="https://www.figma.com/api/mcp/asset/867494bb-7823-41f6-915c-675cf19f4418" alt="" />
+    </div>
+    <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value crimson" id="rejectedCount">0</div>
+      </div>
+      <img src="https://www.figma.com/api/mcp/asset/755314d6-20cf-4663-b95b-207b16933514" alt="" />
+    </div>
+  </div>
+
+  <!-- Search & filter -->
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <div class="search-input">
+        <img src="https://www.figma.com/api/mcp/asset/279483ca-1eb3-443d-8705-c4e0b5b81ed9" alt="" />
+        <input type="text" placeholder="Search by request number, agent company, or agent name..." />
+      </div>
+      <div class="filter-btn">
+        <img class="filter-icon" src="https://www.figma.com/api/mcp/asset/65d1a301-4aa0-439c-bb20-85bbfb332cfe" alt="" />
+        <span class="filter-text">All Statuses</span>
+        <img class="chevron" src="https://www.figma.com/api/mcp/asset/dc9fe1fa-effc-4701-9f76-688df49e4c70" alt="" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Request cards -->
+  <div class="requests-list">
+
+    <!-- REQ-2026-002 -->
+    <div class="request-card" onclick="openModal('req-002')">
+      <div class="card-header">
+        <span class="card-req-id">REQ-2026-002</span>
+        <div class="badge badge-pending">
+          <img src="https://www.figma.com/api/mcp/asset/f9a8aa8c-85a0-4423-874d-6bd338e5b555" alt="" />
+          <span>Pending</span>
+        </div>
+        <div class="card-time">
+          <img src="https://www.figma.com/api/mcp/asset/f927cbb0-c15c-4ca0-ac2b-2d07c057784c" alt="" />
+          2 minutes ago &bull; 2026-04-28 15:04
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-col">
+          <div class="card-col-label">Agent</div>
+          <div class="card-col-vals">
+            <div class="card-val">Global Tour</div>
+            <div class="card-val">Jina</div>
+          </div>
+        </div>
+        <div class="card-col">
+          <div class="card-col-label">Tour Information</div>
+          <div class="card-col-vals">
+            <div class="card-val">Vancouver + Rockies 4N</div>
+            <div class="card-val-row">
+              <img src="https://www.figma.com/api/mcp/asset/f173057f-8e65-4ae8-9b3b-877dcab5b19a" alt="" />
+              <span class="card-val">2026-02-15</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-col">
+          <div class="card-col-label">Customer Information</div>
+          <div class="card-col-vals">
+            <div class="card-val-row">
+              <img src="https://www.figma.com/api/mcp/asset/22c9c8c4-f82e-4104-9e45-04039c3258ef" alt="" />
+              <span class="card-val">4 people</span>
+            </div>
+            <div class="card-val-row">
+              <img src="https://www.figma.com/api/mcp/asset/7ce38da9-797c-460d-9bf9-e42750f6a9d4" alt="" />
+              <span class="card-val">Canada Place</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REQ-2026-001 (highlighted / NEW) -->
+    <div class="request-card highlighted" id="card-req-001" onclick="openModal('req-001')">
+      <div class="card-header">
+        <span class="card-req-id">REQ-2026-001</span>
+        <div class="badge badge-new" id="badge-req-001"><span>NEW</span></div>
+        <div class="card-time">
+          <img src="https://www.figma.com/api/mcp/asset/f927cbb0-c15c-4ca0-ac2b-2d07c057784c" alt="" />
+          5 minutes ago &bull; 2026-04-28 15:01
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-col">
+          <div class="card-col-label">Agent</div>
+          <div class="card-col-vals">
+            <div class="card-val">Bluebird Travel</div>
+            <div class="card-val">Cindy</div>
+          </div>
+        </div>
+        <div class="card-col">
+          <div class="card-col-label">Tour Information</div>
+          <div class="card-col-vals">
+            <div class="card-val">Rockies 3N</div>
+            <div class="card-val-row">
+              <img src="https://www.figma.com/api/mcp/asset/b977f660-ad27-4c27-b242-3e00b6de26aa" alt="" />
+              <span class="card-val">2026-02-10</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-col">
+          <div class="card-col-label">Customer Information</div>
+          <div class="card-col-vals">
+            <div class="card-val-row">
+              <img src="https://www.figma.com/api/mcp/asset/22c9c8c4-f82e-4104-9e45-04039c3258ef" alt="" />
+              <span class="card-val">4 people</span>
+            </div>
+            <div class="card-val-row">
+              <img src="https://www.figma.com/api/mcp/asset/7ce38da9-797c-460d-9bf9-e42750f6a9d4" alt="" />
+              <span class="card-val">YVR International Terminal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /requests-list -->
+
+</div><!-- /content -->
+</main>
+
+<!-- ══════════════ MODAL BACKDROP ══════════════ -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-inner">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <span class="modal-title" id="modalTitle">Request Details - REQ-2024-001</span>
+          <div class="badge badge-pending">
+            <img src="https://www.figma.com/api/mcp/asset/12164948-ffe4-4aa7-b141-efe7c52e0fc9" alt="" />
+            <span>Pending</span>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">
+          <img src="https://www.figma.com/api/mcp/asset/d1deacb2-b961-4f1f-a609-616f1ccbdd7b" alt="Close" />
+        </button>
+      </div>
+
+      <!-- Sections -->
+      <div class="modal-sections">
+
+        <!-- Agent Information -->
+        <div class="section-block">
+          <div class="section-block-title-row">
+            <div class="section-dot"></div>
+            <span class="section-block-title">👤 Agent Information</span>
+          </div>
+          <div class="section-inner">
+            <div class="info-grid-2">
+              <div class="info-field">
+                <span class="info-label">Company</span>
+                <span class="info-val">Bluebird Travel</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Agent</span>
+                <span class="info-val">Cindy</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Email</span>
+                <span class="info-val">cindy@bluebirdtravel.com</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Contact</span>
+                <span class="info-val">+1-604-123-4567</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Tour Information -->
+        <div class="section-block">
+          <div class="section-block-title-row">
+            <div class="section-dot"></div>
+            <span class="section-block-title">🗺️ Tour Information</span>
+          </div>
+          <div class="section-inner">
+            <div class="info-grid-2">
+              <div class="info-field">
+                <span class="info-label">Tour Name</span>
+                <span class="info-val">Rocky 3N</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Total Number</span>
+                <span class="info-val">4</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Departure Date</span>
+                <span class="info-val">2026-02-10</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">End Date</span>
+                <span class="info-val">2026-02-13</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Meeting Place</span>
+                <span class="info-val">Canada Place</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Sending Place</span>
+                <span class="info-val">Canada Place</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Customer Information -->
+        <div class="section-block">
+          <div class="section-block-title-row">
+            <div class="section-dot"></div>
+            <span class="section-block-title">👥 Customer Information</span>
+          </div>
+
+          <!-- Kevin -->
+          <div class="section-inner">
+            <div class="info-grid-4">
+              <div class="info-field">
+                <span class="info-label">Name</span>
+                <span class="info-val">Kevin</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Contact</span>
+                <span class="info-val">604-555-3332</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Gender</span>
+                <span class="info-val">Male</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Occupancy</span>
+                <span class="info-val">2 Persons</span>
+                <span class="info-note">Bed type subject to availability</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Minsu -->
+          <div class="section-inner">
+            <div class="info-grid-4">
+              <div class="info-field">
+                <span class="info-label">Name</span>
+                <span class="info-val">Minsu</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Contact</span>
+                <span class="info-val">604-555-3332</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Gender</span>
+                <span class="info-val">Male</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Occupancy</span>
+                <span class="info-val">2 Persons</span>
+                <span class="info-note">Bed type subject to availability</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brian -->
+          <div class="section-inner">
+            <div class="info-grid-4">
+              <div class="info-field">
+                <span class="info-label">Name</span>
+                <span class="info-val">Brian</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Contact</span>
+                <span class="info-val">604-555-3332</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Gender</span>
+                <span class="info-val">Male</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Occupancy</span>
+                <span class="info-val">2 Persons</span>
+                <span class="info-note">Bed type subject to availability</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- David -->
+          <div class="section-inner">
+            <div class="info-grid-4">
+              <div class="info-field">
+                <span class="info-label">Name</span>
+                <span class="info-val">David</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Contact</span>
+                <span class="info-val">604-555-3332</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Gender</span>
+                <span class="info-val">Male</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Occupancy</span>
+                <span class="info-val">2 Persons</span>
+                <span class="info-note">Bed type subject to availability</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rooms total -->
+          <div class="rooms-total">
+            <span class="rooms-total-label">Total number of rooms used by this group:</span>
+            <span class="rooms-total-val">2</span>
+          </div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Flight Information -->
+        <div class="section-block">
+          <div class="section-block-title-row">
+            <div class="section-dot"></div>
+            <span class="section-block-title">✈️ Flight Information</span>
+          </div>
+          <div class="section-inner" style="display:flex;flex-direction:column;gap:16px;">
+            <!-- Flight 1 -->
+            <div>
+              <div class="flight-number-label" style="margin-bottom:10px;">1</div>
+              <div class="info-grid-6">
+                <div class="info-field">
+                  <span class="info-label">Flight #</span>
+                  <span class="info-val">AC123</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Date</span>
+                  <span class="info-val">FEB 10</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Time</span>
+                  <span class="info-val">14:30</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Departure</span>
+                  <span class="info-val">ICN</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Arrival</span>
+                  <span class="info-val">YVR</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Time</span>
+                  <span class="info-val">14:30</span>
+                </div>
+              </div>
+            </div>
+            <!-- Flight 2 -->
+            <div>
+              <div class="flight-number-label" style="margin-bottom:10px;">2</div>
+              <div class="info-grid-6">
+                <div class="info-field">
+                  <span class="info-label">Flight #</span>
+                  <span class="info-val">AC122</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Date</span>
+                  <span class="info-val">FEB 13</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Time</span>
+                  <span class="info-val">17:30</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Departure</span>
+                  <span class="info-val">YVR</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Arrival</span>
+                  <span class="info-val">ICN</span>
+                </div>
+                <div class="info-field">
+                  <span class="info-label">Time</span>
+                  <span class="info-val">14:30</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Optional Tour Information -->
+        <div class="section-block">
+          <div class="section-block-title-row">
+            <div class="section-dot"></div>
+            <span class="section-block-title">⚠️ Optional Tour Information</span>
+          </div>
+
+          <!-- Gondola + Lunch Buffet -->
+          <div class="section-inner" style="display:flex;flex-direction:column;gap:16px;">
+            <div class="info-grid-3">
+              <div class="info-field">
+                <span class="info-label">Tour Name</span>
+                <span class="info-val">Gondola + Lunch Buffet</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Participants</span>
+                <span class="info-val">4/4</span>
+                <span class="info-note">3 adults, 1 child</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Estimated Cost</span>
+                <span class="info-val">485 CAD</span>
+                <span class="info-note">(Adult 130 CAD × 3 + Child 95 × 1)</span>
+              </div>
+            </div>
+            <div class="payment-row">
+              <span class="payment-row-label">Payment Method</span>
+              <span class="payment-pill">Included in Invoice</span>
+            </div>
+          </div>
+
+          <!-- Columbia Icefield -->
+          <div class="section-inner" style="display:flex;flex-direction:column;gap:16px;">
+            <div class="info-grid-3">
+              <div class="info-field">
+                <span class="info-label">Tour Name</span>
+                <span class="info-val">Columbia Icefield Glacier Adventure Tour (Snow Coach)</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Participants</span>
+                <span class="info-val">4/4</span>
+                <span class="info-note">3 adults, 1 child</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Estimated Cost</span>
+                <span class="info-val">345 CAD</span>
+                <span class="info-note">(Adult 90 CAD × 3 + Child 75 CAD × 1)</span>
+              </div>
+            </div>
+            <div class="payment-row">
+              <span class="payment-row-label">Payment Method</span>
+              <span class="payment-pill">Pay Cash at Destination</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meal Plan Information -->
+        <div class="section-block">
+          <div class="section-block-title-row">
+            <div class="section-dot"></div>
+            <span class="section-block-title">🍽️ Meal Plan Information</span>
+          </div>
+          <div class="section-inner" style="display:flex;flex-direction:column;gap:16px;">
+            <div class="info-grid-3">
+              <div class="info-field">
+                <span class="info-label">Number</span>
+                <span class="info-val">4/4 people</span>
+              </div>
+              <div class="info-field">
+                <span class="info-label">Estimated Cost</span>
+                <span class="info-val">416 CAD</span>
+              </div>
+            </div>
+            <div class="payment-row">
+              <span class="payment-row-label">Payment Method</span>
+              <span class="payment-pill">Pay Cash at Destination</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Action Area -->
+        <div class="admin-action">
+          <div class="admin-action-header">
+            <span class="admin-action-pill">Admin Action Area</span>
+            <span class="admin-action-sub">Please review the request and select an action below</span>
+          </div>
+          <div class="admin-action-inner">
+            <div class="admin-notes-label">Review Notes (Optional)</div>
+            <textarea class="admin-notes-textarea" id="reviewNotes" placeholder="Enter review details or message to the customer..." oninput="toggleHoldBtn()"></textarea>
+            <div class="admin-action-btns">
+              <button class="action-btn invoice" onclick="openInvoice()">
+                <img src="https://www.figma.com/api/mcp/asset/b88f8807-9e15-4232-adb8-d0352d07e819" alt="" />
+                Check Invoice
+              </button>
+              <button class="action-btn hold" id="holdBtn" disabled onclick="incrementPendHold(); closeModal()">
+                <img src="https://www.figma.com/api/mcp/asset/9e4a0e47-8b49-48f3-bba9-3b32ed8a3ec9" alt="" />
+                Send and Hold
+              </button>
+              <button class="action-btn reject" onclick="rejectRequest()">
+                <img src="https://www.figma.com/api/mcp/asset/4b57e501-fb9a-47df-80dc-eeeae6480c9a" alt="" />
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /modal-sections -->
+
+    </div><!-- /modal-inner -->
+  </div><!-- /modal -->
+</div><!-- /modal-backdrop -->
+
+<script>
+  var currentModalId = null;
+  var viewedRequests = {};
+
+  function openModal(id) {
+    currentModalId = id;
+    document.getElementById('modalTitle').textContent =
+      id === 'req-001' ? 'Request Details - REQ-2026-001' : 'Request Details - REQ-2026-002';
+    document.getElementById('modalBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Reset textarea and hold btn each open
+    document.getElementById('reviewNotes').value = '';
+    toggleHoldBtn();
+  }
+
+  function closeModal() {
+    document.getElementById('modalBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
+    // If REQ-2026-001 was opened, swap NEW → Pending
+    if (currentModalId === 'req-001' && !viewedRequests['req-001']) {
+      viewedRequests['req-001'] = true;
+      var badge = document.getElementById('badge-req-001');
+      badge.className = 'badge badge-pending';
+      badge.innerHTML = '<img src="https://www.figma.com/api/mcp/asset/12164948-ffe4-4aa7-b141-efe7c52e0fc9" alt="" /><span>Pending</span>';
+      document.getElementById('card-req-001').classList.remove('highlighted');
+    }
+    currentModalId = null;
+  }
+
+  function rejectRequest() {
+    if (!currentModalId) return;
+    var reqId = currentModalId;
+    viewedRequests[reqId] = true;
+    var badge = document.getElementById('badge-' + reqId);
+    if (badge) {
+      badge.className = 'badge badge-rejected';
+      badge.innerHTML = '<img src="https://www.figma.com/api/mcp/asset/f57a6e08-493b-42fe-9c0f-1afb3c358d40" alt="" /><span>Rejected</span>';
+    }
+    var card = document.getElementById('card-' + reqId);
+    if (card) card.classList.remove('highlighted');
+    var rejCount = document.getElementById('rejectedCount');
+    if (rejCount) rejCount.textContent = parseInt(rejCount.textContent, 10) + 1;
+    var newCount = document.getElementById('newCount');
+    if (newCount) newCount.textContent = Math.max(0, parseInt(newCount.textContent, 10) - 1);
+    closeModal();
+  }
+
+  function incrementPendHold() {
+    var el = document.getElementById('pendHoldCount');
+    el.textContent = parseInt(el.textContent, 10) + 1;
+  }
+
+  function handleBackdropClick(e) {
+    if (e.target === document.getElementById('modalBackdrop')) {
+      closeModal();
+    }
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  function toggleHoldBtn() {
+    var notes = document.getElementById('reviewNotes');
+    var btn = document.getElementById('holdBtn');
+    var hasText = notes.value.trim().length > 0;
+    btn.disabled = !hasText;
+    btn.classList.toggle('enabled', hasText);
+  }
+
+  function openInvoice() {
+    sessionStorage.setItem('invoiceRequestId', currentModalId);
+    closeModal();
+    window.location.href = 'invoice.html';
+  }
+
+  function onInvoiceApproved() {
+    applyApproval();
+  }
+
+  function applyApproval() {
+    // Increment Confirmed count
+    var confirmed = document.getElementById('confirmedCount');
+    if (confirmed) confirmed.textContent = parseInt(confirmed.textContent, 10) + 1;
+
+    // Decrement New (Unconfirmed) count
+    var newCount = document.getElementById('newCount');
+    if (newCount) newCount.textContent = Math.max(0, parseInt(newCount.textContent, 10) - 1);
+
+    // Swap the approved card's badge to Confirmed and remove highlight
+    var reqId = sessionStorage.getItem('invoiceRequestId') || 'req-001';
+    sessionStorage.removeItem('invoiceRequestId');
+    viewedRequests[reqId] = true;
+    var badge = document.getElementById('badge-' + reqId);
+    if (badge) {
+      badge.className = 'badge badge-confirmed';
+      badge.innerHTML = '<img src="https://www.figma.com/api/mcp/asset/824520a1-59ab-4102-bc79-b576b0f57005" alt="" /><span>Confirmed</span>';
+    }
+    var card = document.getElementById('card-' + reqId);
+    if (card) card.classList.remove('highlighted');
+  }
+
+  // On page load, check if returning from an approved invoice
+  (function () {
+    if (sessionStorage.getItem('invoiceApproved') === '1') {
+      sessionStorage.removeItem('invoiceApproved');
+      applyApproval();
+    }
+  })();
+</script>
+</body>
+</html>
